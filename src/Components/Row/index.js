@@ -60,19 +60,29 @@ class Row extends LitElement {
     return `row ${this.type}`;
   }
   /**
+   * Generate cells
+   * @return {HTMLElement[]}
+   */
+  generateCelss() {
+    return this.columns.map(this.createCell);
+  }
+  /**
    * Render component
    * @return {Object} - component`s template
    */
   render() {
-    const cells = this.columns.map(this.createCell);
+    const cells = this.generateCelss();
     const rowClasses = this.getClasses();
     return html`
       <div class=${rowClasses} 
       style="grid-template-columns: repeat(${cells.length}, 1fr);">
         ${cells}
+        <slot></slot>
       </div>
     `;
   }
 }
+
+customElements.define('user-row', Row);
 
 export default Row;

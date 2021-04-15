@@ -1,10 +1,8 @@
 import './index.css';
 
-import Grid from './Components/Grid';
-import Row from './Components/Row';
-
-customElements.define('user-grid', Grid);
-customElements.define('user-row', Row);
+import './Components/Grid';
+import './Components/Row';
+import './Components/Tooltip';
 
 const getData = async (url) => {
   const response = await fetch(url);
@@ -13,7 +11,7 @@ const getData = async (url) => {
 };
 
 const fillGrid = async () => {
-  const data = await getData('https://jsonplaceholder.typicode.com/posts');
+  const data = await getData('http://localhost:3000/posts');
   const grid = document.getElementById('user-grid');
   grid.setData(data);
   document.body.append(grid);

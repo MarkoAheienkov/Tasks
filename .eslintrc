@@ -10,5 +10,6 @@
   },
   "extends":  ["eslint:recommended", "google"],
   "rules": {
+    "no-invalid-this": "off"
   }
 }

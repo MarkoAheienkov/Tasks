@@ -91,23 +91,56 @@ class Grid extends LitElement {
     this.columns = {...columns};
   }
   /**
+   * @param {HTMLElement[]} rows
+   * @return {HTMLElement[]}
+   */
+  addTooltips(rows) {
+    return rows.map((row, idx) => {
+      const tooltip = document.createElement('user-tooltip');
+      tooltip.forSelector = 'user-row';
+      tooltip.content = `<p>Post №${idx+1}</p>`;
+      tooltip.right = true;
+      row.append(tooltip);
+      return row;
+    });
+  }
+  /**
+   * Generate header
+   * @return {HTMLElement} - header of grid
+   */
+  generateHeader() {
+    const titles = Object.values(this.columns);
+    const header = document.createElement('user-row');
+    header.setColumns(titles);
+    header.type = 'head';
+    return header;
+  }
+  /**
+   * Generate rows
+   * @return {HTMLElement[]} - rows
+   */
+  generateRows() {
+    const dataTitles = this.dataToTitles();
+    const rows = this.createRows(dataTitles);
+    const rowsWithTooltips = this.addTooltips(rows);
+    return rowsWithTooltips;
+  }
+  /**
    * Render component
    * @return {Object} - component`s template
    */
   render() {
-    const titles = Object.values(this.columns);
-    const row = document.createElement('user-row');
-    const dataTitles = this.dataToTitles();
-    row.setColumns(titles);
-    row.type = 'head';
-    const rows = this.createRows(dataTitles);
+    const header = this.generateHeader();
+    const rows = this.generateRows();
     return html`
       <div class="grid">
-        ${row}
+        ${header}
         ${rows}
       </div>
     `;
   }
 }
+
+customElements.define('user-grid', Grid);
 
 export default Grid;
