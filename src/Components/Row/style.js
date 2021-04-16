@@ -4,8 +4,8 @@ const style = css`
   .row {
     display: grid;
     gap: 10px;
-    border-left: 1px solid black;
-    border-right: 1px solid black;
+    border-left: 1px solid #EFEFEF;
+    border-right: 1px solid #EFEFEF;
     padding: 10px;
     text-align: center;
   }

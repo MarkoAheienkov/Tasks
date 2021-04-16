@@ -4,6 +4,7 @@ const style = css`
   .grid {
     max-width: 1000px;
     margin: auto;
+    border-bottom: 1px solid #EFEFEF;
   }
   user-tooltip {
     padding: 0px 5px;

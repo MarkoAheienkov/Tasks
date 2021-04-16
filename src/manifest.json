@@ -1,0 +1,21 @@
+{
+  "name": "Grid and Tooltip",
+  "short_name": "GAT",
+  "start_url": ".",
+  "display": "browser",
+  "background_color": "#fff",
+  "description": "A simply Grid and Tooltip with WebComponents",
+  "theme-color": "#3E464E",
+  "icons": [
+    {
+      "src": "./icons/grid-256.ico",
+      "type": "image/ico",
+      "sizes": "256x256"
+    },
+    {
+      "src": "./icons/grid-512.ico",
+      "type": "image/ico",
+      "sizes": "512x512"
+    }
+  ]
+}
