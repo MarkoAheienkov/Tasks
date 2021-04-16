@@ -4,9 +4,14 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="manifest" href="./manifest.json">
     <title>Task 1</title>
+    <link rel="shortcut icon" type="image/jpg" href="./icons/grid-512.ico"/>
 </head>
 <body>
-    <user-grid id="user-grid" columns='{"title": "Title", "body": "Text"}'></user-grid>
+    <div class="container">
+        <user-grid id="user-grid" columns='{"title": "Title", "body": "Text"}'></user-grid>
+        <user-pagination id="pagination"></user-pagination>
+    </div>
 </body>
 </html>

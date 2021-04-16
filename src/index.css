@@ -7,3 +7,37 @@
 body{
   font-family: Arial, Helvetica, sans-serif;
 }
+
+user-pagination {
+  display: flex;
+  justify-content: space-around;
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #EFEFEF;
+}
+
+user-pagination a {
+  display: block;
+  cursor: pointer;
+  color: rgba(0,0,0,.8);
+  transition: .4s color ease;
+  padding: 2px;
+  border: 2px solid transparent;
+  text-decoration: none;
+}
+
+user-pagination a:hover ,
+user-pagination a.active{
+  font-weight: bold;
+  color: rgba(0,0,0,1);
+  border-bottom-color: black;
+}
+
+user-grid {
+  display: block;
+}
+
+.container {
+  max-width: 1000px;
+  margin: auto;
+}
