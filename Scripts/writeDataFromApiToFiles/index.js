@@ -1,6 +1,6 @@
 const path = require('path');
 const fetch = require('node-fetch');
-const {FileSystemWriter, FileSystemReader} = require('../../Classes/FileSystemJSON');
+const {FileSystemWriter} = require('../../Classes/FileSystemJSON');
 
 const REQUESTS_PER_DAY = 300;
 
@@ -33,10 +33,3 @@ const getDataAndWriteIt = async () => {
 };
 
 getDataAndWriteIt();
-
-// const getDataFromFile = async () => {
-//   const data = await FileSystemReader.read(PATH_TO_FILE);
-//   console.log(data);
-// };
-
-// getDataFromFile();
