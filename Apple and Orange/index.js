@@ -25,13 +25,7 @@ function readLine() {
 // MY CODE
 
 function inRangeCreator(a,b) {
-    return (num) => {
-        if (num >= a && num <= b) {
-            return true;
-        } else {
-            return false;
-        }
-    };
+    return (num) => num >= a && num <= b;
 }
 function addToAllArrElements(arr, num) {
     return arr.map((el) => el+num);
