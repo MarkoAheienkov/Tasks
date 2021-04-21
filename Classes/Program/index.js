@@ -2,6 +2,7 @@ const logger = require('node-color-log');
 
 const BSTFactory = require('../BSTFactory');
 const {FileSystemReader} = require('../FileSystemJSON');
+const SortAndFind = require('../SortAndFind');
 
 /**
  * Class for create Program
@@ -9,11 +10,13 @@ const {FileSystemReader} = require('../FileSystemJSON');
 class Program {
   /**
    * @param {String} pathToFile - path to file from which read data
+   * @param {SortAndFind} sortAndFind
   */
-  constructor(pathToFile) {
+  constructor(pathToFile, sortAndFind) {
     this.data = [];
     this.onLine = this.onLine.bind(this);
     this.bstFactory = new BSTFactory();
+    this.sortAndFind = sortAndFind;
     this.options = {
       show: this.showOption.bind(this),
       find: this.findOption.bind(this),
@@ -39,16 +42,19 @@ option=help - show all operations
 option=show - show first 100 records
 option=show limit=1 - show first record
 option=show all=true - show all records
+option=show page=2 - show next 100 records
 
 option=find selector=s value=v - find first 100 records with value=v
 option=find selector=s value=v limit=1 - find first record with value=v
 option=find selector=s value=v all=true - find all records with value=v
+option=find selector=s value=v page=2 - find next 100 records with value=v
 
 option=sort selector=s - show first 100 records sorted by selector
 option=sort selector=s limit=1 - show first record in sorted array
 option=sort selector=s all=true - show all records sorted by selector
 option=sort selector=s order=1 - show sorted array in increase order
 option=sort selector=s order=-1 - show sorted array in decrease order
+option=sort selector=s page=2 - show next 100 sorted records
         `);
   }
   /**
@@ -98,13 +104,11 @@ option=sort selector=s order=-1 - show sorted array in decrease order
    * Show options
    */
   showOption() {
-    const {limit, all} = process.env;
+    const {limit, all, page} = process.env;
     if (all) {
       this.showAll(this.data);
-    } else if (this.data) {
-      this.show(this.data, limit);
     } else {
-      this.show(this.data);
+      this.show(this.data, limit, page);
     }
   }
   /**
@@ -120,13 +124,23 @@ option=sort selector=s order=-1 - show sorted array in decrease order
    * Show records
    * @param {[]} data - data which will log
    * @param {Nubmer} limit - limit of records to show
+   * @param {Number} page - page of records to show
    */
-  show(data, limit = 100) {
+  show(data, limit = 100, page = 1) {
     if (isNaN(limit)) {
       this.logError(`Limit must be a number`);
       return;
     }
-    for (let i = 0; i < limit; i++) {
+    if (isNaN(page)) {
+      this.logError(`Page must be a number`);
+      return;
+    }
+    const from = limit*(page-1);
+    const to = limit*page;
+    for (let i = from; i < to; i++) {
+      if (!data[i]) {
+        break;
+      }
       console.log(data[i]);
     }
   }
@@ -134,7 +148,7 @@ option=sort selector=s order=-1 - show sorted array in decrease order
    * Find options
    */
   findOption() {
-    const {selector, value, limit, all} = process.env;
+    const {selector, value, limit, all, page} = process.env;
     if (!selector || !value) {
       this.logError(`Paramters: value and selector are required for find!`);
       return;
@@ -143,7 +157,7 @@ option=sort selector=s order=-1 - show sorted array in decrease order
     if (all) {
       this.showAll(data);
     } else {
-      this.show(data, limit);
+      this.show(data, limit, page);
     }
   }
   /**
@@ -152,16 +166,13 @@ option=sort selector=s order=-1 - show sorted array in decrease order
    * @return {[]} - data with finding value
    */
   findBySelector(selector, value) {
-    this.bstFactory.createBST(selector, this.data);
-    const bst = this.bstFactory.getBST(selector);
-    const data = bst.find(value);
-    return data;
+    return this.sortAndFind.find(this.data, selector, value);
   }
   /**
    * Sorted options
    */
   sortedOption() {
-    const {selector, limit, all, order} = process.env;
+    const {selector, limit, all, order, page} = process.env;
     if (!selector) {
       this.logError(`Paramter: selector is required for sorted!`);
       return;
@@ -170,7 +181,7 @@ option=sort selector=s order=-1 - show sorted array in decrease order
     if (all) {
       this.showAll(data);
     } else {
-      this.show(data, limit);
+      this.show(data, limit, page);
     }
   }
   /**
@@ -184,7 +195,7 @@ option=sort selector=s order=-1 - show sorted array in decrease order
     order = parseInt(order);
     let data;
     if (order === 1) {
-      data = bst.depthFirstSearchInOrder();
+      data = this.sortAndFind.sortIncrease(this.data, selector);
     } else if (order === -1) {
       data = bst.depthFirstSearchReverseInOrder();
     } else {
