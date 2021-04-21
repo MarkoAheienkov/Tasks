@@ -1,3 +1,3 @@
-# NUBMER LINES JUMPS
-# Link: https://www.hackerrank.com/challenges/kangaroo/problem
+# APPLE AND ORANGE
+# Link: https://www.hackerrank.com/challenges/apple-and-orange/problem
 # Status: SOLVED
