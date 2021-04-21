@@ -13,6 +13,7 @@
     "eslint-config-google": "^0.14.0"
   },
   "dependencies": {
+    "node-color-log": "^5.2.0",
     "node-fetch": "^2.6.1"
   }
 }

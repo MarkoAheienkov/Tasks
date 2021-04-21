@@ -2,7 +2,7 @@ const path = require('path');
 const fetch = require('node-fetch');
 const {FileSystemWriter} = require('../../Classes/FileSystemJSON');
 
-const REQUESTS_PER_DAY = 300;
+const REQUESTS_PER_DAY = 1;
 
 const ACCESS_KEY = '3e0a35b684d94cb02fb32974d52f0a2d';
 
@@ -26,8 +26,6 @@ const getDataAndWriteIt = async () => {
   const responces = await Promise.all(dataPromises);
 
   const mapData = responces.map((responce) => responce.data).flat();
-
-  console.log(mapData);
 
   await FileSystemWriter.write(PATH_TO_FILE, mapData);
 };

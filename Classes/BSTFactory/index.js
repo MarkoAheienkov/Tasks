@@ -11,12 +11,14 @@ class BSTFactory {
   /**
    * Create BST
    * @param {String} selector - selector for BST
+   * @param {[]} data - data for populating tree
    */
-  createBST(selector) {
+  createBST(selector, data = []) {
     const candidateBST = this.getBST(selector);
     if (!candidateBST) {
       const bst = new BST(selector);
       this.trees[selector] = bst;
+      this._populateTree(selector, data);
     }
   }
   /**
@@ -26,6 +28,16 @@ class BSTFactory {
    */
   getBST(selector) {
     return this.trees[selector];
+  }
+  /**
+   * Populate tree with data from array
+   * @param {String} selector - selector for tree
+   * @param {[]} arr - array with data
+  */
+  _populateTree(selector, arr) {
+    arr.forEach((data) => {
+      this.trees[selector].insert(data);
+    });
   }
 }
 
