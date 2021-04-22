@@ -15,7 +15,6 @@ class Program {
   constructor(pathToFile, sortAndFind) {
     this.data = [];
     this.onLine = this.onLine.bind(this);
-    this.bstFactory = new BSTFactory();
     this.sortAndFind = sortAndFind;
     this.options = {
       show: this.showOption.bind(this),
@@ -117,7 +116,7 @@ option=sort selector=s page=2 - show next 100 sorted records
    */
   showAll(data) {
     for (let i = 0; i < data.length; i++) {
-      console.log(this.data[i]);
+      console.log(data[i]);
     }
   }
   /**
@@ -190,14 +189,12 @@ option=sort selector=s page=2 - show next 100 sorted records
    * @return {[]} - data sorted by selector
    */
   sortDataBySelector(selector, order = 1) {
-    this.bstFactory.createBST(selector, this.data);
-    const bst = this.bstFactory.getBST(selector);
     order = parseInt(order);
     let data;
     if (order === 1) {
       data = this.sortAndFind.sortIncrease(this.data, selector);
     } else if (order === -1) {
-      data = bst.depthFirstSearchReverseInOrder();
+      data = this.sortAndFind.sortDecrease(this.data, selector);
     } else {
       this.logError('Order must be equal to 1 or -1');
       return;
