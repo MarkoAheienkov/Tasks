@@ -1,7 +1,5 @@
-const logger = require('node-color-log');
-
-const BSTFactory = require('../BSTFactory');
-const {FileSystemReader} = require('../FileSystemJSON');
+const {FileSystemReader} = require('../FileSystem');
+const Logger = require('../Logger');
 const SortAndFind = require('../SortAndFind');
 
 /**
@@ -10,80 +8,73 @@ const SortAndFind = require('../SortAndFind');
 class Program {
   /**
    * @param {String} pathToFile - path to file from which read data
-   * @param {SortAndFind} sortAndFind
+   * @param {SortAndFind} sortAndFind - sort and find data
+   * @param {Logger} logger - log data
+   * @param {Class<FileSystemReader>} FileSystemReader - file system reader
   */
-  constructor(pathToFile, sortAndFind) {
-    this.data = [];
-    this.onLine = this.onLine.bind(this);
-    this.sortAndFind = sortAndFind;
-    this.options = {
-      show: this.showOption.bind(this),
-      find: this.findOption.bind(this),
-      sort: this.sortedOption.bind(this),
-      help: this.logOptions.bind(this),
+  constructor(pathToFile, sortAndFind, logger, FileSystemReader) {
+    this._data = [];
+    this._options = {
+      show: this._showOption.bind(this),
+      find: this._findOption.bind(this),
+      sort: this._sortOption.bind(this),
+      help: this._logOption.bind(this),
     };
-    this.pathToFile = pathToFile;
+    this._sortAndFind = sortAndFind;
+    this._logger = logger;
+    this._pathToFile = pathToFile;
+    this._FileSystemReader = FileSystemReader;
   }
   /**
    * @return {Promise<[]>}
    */
-  async getData() {
-    return await FileSystemReader.read(this.pathToFile);
+  async _getData() {
+    return await this._FileSystemReader.read(this._pathToFile);
   }
   /**
    * Log options
    */
-  logOptions() {
-    logger.color('cyan').log('Options:');
-    logger.color('cyan').log(`
-option=help - show all operations
+  _logOption() {
+    this._logger.logPrimary('Options:');
+    this._logger.logPrimary(`
+      option=help - show all operations
 
-option=show - show first 100 records
-option=show limit=1 - show first record
-option=show all=true - show all records
-option=show page=2 - show next 100 records
+      option=show - show first 100 records
+      option=show limit=1 - show first record
+      option=show all=true - show all records
+      option=show page=2 - show next 100 records
 
-option=find selector=s value=v - find first 100 records with value=v
-option=find selector=s value=v limit=1 - find first record with value=v
-option=find selector=s value=v all=true - find all records with value=v
-option=find selector=s value=v page=2 - find next 100 records with value=v
+      option=find selector=s value=v - find first 100 records with value=v
+      option=find selector=s value=v limit=1 - find first record with value=v
+      option=find selector=s value=v all=true - find all records with value=v
+      option=find selector=s value=v page=2 - find next 100 records with value=v
 
-option=sort selector=s - show first 100 records sorted by selector
-option=sort selector=s limit=1 - show first record in sorted array
-option=sort selector=s all=true - show all records sorted by selector
-option=sort selector=s order=1 - show sorted array in increase order
-option=sort selector=s order=-1 - show sorted array in decrease order
-option=sort selector=s page=2 - show next 100 sorted records
-        `);
-  }
-  /**
-   * Log error
-   * @param {String} errorText - error text
-   */
-  logError(errorText) {
-    logger.color('red').log(errorText);
-    logger
-        .color('cyan')
-        .log('Write: option=help for get more info about program');
+      option=sort selector=s - show first 100 records sorted by selector
+      option=sort selector=s limit=1 - show first record in sorted array
+      option=sort selector=s all=true - show all records sorted by selector
+      option=sort selector=s order=1 - show sorted array in increase order
+      option=sort selector=s order=-1 - show sorted array in decrease order
+      option=sort selector=s page=2 - show next 100 sorted records
+    `);
   }
   /**
    * Main function
    */
   async main() {
-    this.data = await this.getData();
-    this.onLine();
+    this._data = await this._getData();
+    this._processData();
   }
   /**
-   * Event listener for readLine
+   * Process data
    */
-  onLine() {
-    const option = this.getOptionFromInput();
-    this.callOption(option);
+  _processData() {
+    const option = this._getOptionFromInput();
+    this._callOption(option);
   }
   /**
    * @return {String}
    */
-  getOptionFromInput() {
+  _getOptionFromInput() {
     const option = process.env.option;
     return option;
   }
@@ -92,31 +83,32 @@ option=sort selector=s page=2 - show next 100 sorted records
    * @param {String} option - option
    * @return {void}
    */
-  callOption(option) {
-    if (!this.options[option]) {
-      this.logError(`No such option like: '${option}'`);
+  _callOption(option) {
+    if (!this._options[option]) {
+      this._logger.logError(`No such option like: '${option}'`);
+      this._logger.log('Write option=help - to gel list of all options');
       return;
     }
-    this.options[option]();
+    this._options[option]();
   }
   /**
    * Show options
    */
-  showOption() {
+  _showOption() {
     const {limit, all, page} = process.env;
     if (all) {
-      this.showAll(this.data);
+      this._showAll(this._data);
     } else {
-      this.show(this.data, limit, page);
+      this._show(this._data, limit, page);
     }
   }
   /**
    * Show all records
    * @param {[]} data - data to show
    */
-  showAll(data) {
+  _showAll(data) {
     for (let i = 0; i < data.length; i++) {
-      console.log(data[i]);
+      this._logger.log(data[i]);
     }
   }
   /**
@@ -125,38 +117,35 @@ option=sort selector=s page=2 - show next 100 sorted records
    * @param {Nubmer} limit - limit of records to show
    * @param {Number} page - page of records to show
    */
-  show(data, limit = 100, page = 1) {
+  _show(data, limit = 100, page = 1) {
     if (isNaN(limit)) {
-      this.logError(`Limit must be a number`);
+      this._logger.logError(`Limit must be a number`);
       return;
     }
     if (isNaN(page)) {
-      this.logError(`Page must be a number`);
+      this._logger.logError(`Page must be a number`);
       return;
     }
     const from = limit*(page-1);
     const to = limit*page;
     for (let i = from; i < to; i++) {
-      if (!data[i]) {
-        break;
-      }
-      console.log(data[i]);
+      this._logger.log(data[i]);
     }
   }
   /**
    * Find options
    */
-  findOption() {
+  _findOption() {
     const {selector, value, limit, all, page} = process.env;
     if (!selector || !value) {
-      this.logError(`Paramters: value and selector are required for find!`);
+      this._logger.logError(`Paramters: value and selector are required for find!`);
       return;
     }
-    const data = this.findBySelector(selector, value);
+    const data = this._findBySelector(selector, value);
     if (all) {
-      this.showAll(data);
+      this._showAll(data);
     } else {
-      this.show(data, limit, page);
+      this._show(data, limit, page);
     }
   }
   /**
@@ -164,23 +153,23 @@ option=sort selector=s page=2 - show next 100 sorted records
    * @param {String} value
    * @return {[]} - data with finding value
    */
-  findBySelector(selector, value) {
-    return this.sortAndFind.find(this.data, selector, value);
+  _findBySelector(selector, value) {
+    return this._sortAndFind.find(this._data, selector, value);
   }
   /**
-   * Sorted options
+   * Sort options
    */
-  sortedOption() {
+  _sortOption() {
     const {selector, limit, all, order, page} = process.env;
     if (!selector) {
-      this.logError(`Paramter: selector is required for sorted!`);
+      this._logger.logError(`Paramter: selector is required for sorted!`);
       return;
     }
-    const data = this.sortDataBySelector(selector, order);
+    const data = this._sortDataBySelector(selector, order);
     if (all) {
-      this.showAll(data);
+      this._showAll(data);
     } else {
-      this.show(data, limit, page);
+      this._show(data, limit, page);
     }
   }
   /**
@@ -188,15 +177,15 @@ option=sort selector=s page=2 - show next 100 sorted records
    * @param {Number} order - order 1 - increase, -1 - decrease
    * @return {[]} - data sorted by selector
    */
-  sortDataBySelector(selector, order = 1) {
+  _sortDataBySelector(selector, order = 1) {
     order = parseInt(order);
     let data;
     if (order === 1) {
-      data = this.sortAndFind.sortIncrease(this.data, selector);
+      data = this._sortAndFind.sortIncrease(this._data, selector);
     } else if (order === -1) {
-      data = this.sortAndFind.sortDecrease(this.data, selector);
+      data = this._sortAndFind.sortDecrease(this._data, selector);
     } else {
-      this.logError('Order must be equal to 1 or -1');
+      this._logger.logError('Order must be equal to 1 or -1');
       return;
     }
     return data;

@@ -8,28 +8,25 @@ class SortAndFind {
    * @param {[]} data
    * @param {String} selector - selector
    * @param {*} value - value, which you want find
-   * @return {[]}
    */
   find(data, selector, value) {
-    return [];
+    throw new Error('Method find(data, selector, value) must be implemented');
   }
   /**
    * Sort value increase by selector
    * @param {[]} data
    * @param {String} selector
-   * @return {[]}
    */
   sortIncrease(data, selector) {
-    return [];
+    throw new Error('Method sortIncrease(data, selector) must be implemented');
   }
   /**
    * Sort value decrease by selector
    * @param {[]} data
    * @param {String} selector
-   * @return {[]}
    */
   sortDecrease(data, selector) {
-    return [];
+    throw new Error('Method sortDecrease(data, selector) must be implemented');
   }
 }
 

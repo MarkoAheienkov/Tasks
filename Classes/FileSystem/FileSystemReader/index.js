@@ -9,7 +9,7 @@ class FileSystemReader {
    * @return {Promise<[]>}
    */
   static async read(path) {
-    return null;
+    throw new Error('Method read(path) must be implemented');
   }
 }
 

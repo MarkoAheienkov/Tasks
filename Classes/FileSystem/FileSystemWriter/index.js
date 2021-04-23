@@ -9,6 +9,7 @@ class FileSystemWriter {
    * @param {[*]} data
    */
   static async write(path, data) {
+    throw new Error('Method write(path, data) must be implemented');
   }
 }
 

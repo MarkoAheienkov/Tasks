@@ -9,6 +9,7 @@
   "extends":  ["eslint:recommended", "google"],
   "rules": {
     "no-invalid-this": "off",
-    "no-unused-vars": "off"
+    "no-unused-vars": "off",
+    "max-len": "off"  
   }
 }

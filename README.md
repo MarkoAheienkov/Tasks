@@ -1,3 +1,5 @@
+# npm run 'manipulate data' - use it for manipulate data from file
+
 # Options and parameters:
 
 - option=help - show all operations
@@ -19,4 +21,6 @@
 - option=sort selector=s order=-1 - show sorted array in decrease order
 - option=sort selector=s page=2 - show next 100 sorted records
 
-all commands use before 'node index'
+all commands use before "npm run 'manipulate data'"
+
+# npm run 'write data' - use it to write data to dile from API
