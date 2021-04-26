@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "manipulate data": "node ./Scripts/manipulateDataFromFile/index.js",
+    "write data": "node ./Scripts/writeDataFromApiToFile/index.js"
   },
   "author": "",
   "license": "ISC",
@@ -13,6 +14,7 @@
     "eslint-config-google": "^0.14.0"
   },
   "dependencies": {
+    "node-color-log": "^5.2.0",
     "node-fetch": "^2.6.1"
   }
 }

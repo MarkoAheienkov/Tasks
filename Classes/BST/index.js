@@ -24,7 +24,11 @@ class Node {
     }
     const fields = this.selector.split('.');
     const value = fields.reduce((value, field) => {
-      return value[field];
+      let newValue = value[field];
+      if (!isNaN(newValue)) {
+        newValue = parseInt(newValue);
+      }
+      return newValue;
     }, this.content[0]);
     return value;
   }
