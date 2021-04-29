@@ -104,7 +104,7 @@ export const deletePost = async (
     await post.remove();
     return res.json({ status: 'success' });
   } catch (err) {
-    return next(err);
+    return next(err as RequestError);
   }
 };
 
