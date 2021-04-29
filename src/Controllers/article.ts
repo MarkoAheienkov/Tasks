@@ -1,5 +1,6 @@
 import { Response, NextFunction, Request } from 'express';
 import ArticleFileDBConnector from '../Classes/ArticleDBConnector/ArticleFileDBConnector';
+import RequestError from '../Classes/Errors/RequestError';
 import UserFactory from '../Classes/Factories/UserFactory';
 import UserFileDBConnector from '../Classes/UserDBConnectors/UserFileDBConnector';
 import getUser from '../Helpers/getUserFromQuery';
@@ -39,7 +40,7 @@ export const getArticleById = async (
     const { id } = req.params;
     const article = await Article.getById(articleFileDBConnector, id);
     if (!article) {
-      const error = new Error('No suche article');
+      const error = new RequestError('No such article', 404);
       throw error;
     }
     return res.json(article);
@@ -57,7 +58,7 @@ export const postArticle = async (
     const { title, body } = req.body;
     const user = await getUser(req);
     if (!user || !(user instanceof User)) {
-      const error = new Error('Authorization Problem');
+      const error = new RequestError('Authorization Problem', 401);
       throw error;
     }
     const article = new Article(title, body, user.id, articleFileDBConnector);
@@ -90,15 +91,15 @@ export const putArticle = async (
     const user = await getUser(req);
     const article = await Article.getById(articleFileDBConnector, id);
     if (!article) {
-      const error = new Error('No such article');
+      const error = new RequestError('No such article', 404);
       throw error;
     }
     if (!user) {
-      const error = new Error('Authorization Problem');
+      const error = new RequestError('Authorization Problem', 401);
       throw error;
     }
     if (!(user instanceof Admin) && !(user.id === article.creator)) {
-      const error = new Error('Authorization Problem');
+      const error = new RequestError('Authorization Problem', 401);
       throw error;
     }
     const { title, body } = req.body;
@@ -121,15 +122,15 @@ export const deleteArticle = async (
     const user = await getUser(req);
     const article = await Article.getById(articleFileDBConnector, id);
     if (!article) {
-      const error = new Error('No such article');
+      const error = new RequestError('No such article', 404);
       throw error;
     }
     if (!user) {
-      const error = new Error('Authorization Problem');
+      const error = new RequestError('Authorization Problem', 401);
       throw error;
     }
     if (!(user instanceof Admin) && !(user.id === article.creator)) {
-      const error = new Error('Authorization Problem');
+      const error = new RequestError('Authorization Problem', 401);
       throw error;
     }
     await Admin.removeArticleFromApprove(userFileDBConnector, id, userFactory);
@@ -150,12 +151,12 @@ export const patchArticleApprove = async (
     const { id } = req.params;
     const user = await getUser(req);
     if (!user || !(user instanceof Admin)) {
-      const error = new Error('Authorization Problem');
+      const error = new RequestError('Authorization Problem', 401);
       throw error;
     }
     const article = await Article.getById(articleFileDBConnector, id);
     if (!article) {
-      const error = new Error('No such article');
+      const error = new RequestError('No such article', 404);
       throw error;
     }
     await article.approve();
@@ -182,15 +183,15 @@ export const deleteArticleDisapprove = async (
     const user = await getUser(req);
     const article = await Article.getById(articleFileDBConnector, id);
     if (!article) {
-      const error = new Error('No such article');
+      const error = new RequestError('No such article', 404);
       throw error;
     }
     if (article.approved) {
-      const error = new Error('Article is already approved');
+      const error = new RequestError('Article is already approved', 409);
       throw error;
     }
     if (!user || !(user instanceof Admin)) {
-      const error = new Error('Authorization Problem');
+      const error = new RequestError('Authorization Problem', 401);
       throw error;
     }
     await Admin.removeArticleFromApprove(userFileDBConnector, id, userFactory);

@@ -1,4 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
+import RequestError from '../Classes/Errors/RequestError';
 import UserFactory from '../Classes/Factories/UserFactory';
 import PostFileDBConnector from '../Classes/PostDBConnector/PostFileDBConnector';
 import UserFileDBConnector from '../Classes/UserDBConnectors/UserFileDBConnector';
@@ -38,7 +39,7 @@ export const getPostById = async (
     const { id } = req.params;
     const post = await Post.getById(postFileDBConnector, id);
     if (!post) {
-      const error = new Error('No such post');
+      const error = new RequestError('No such post', 404);
       throw error;
     }
     return res.json(post);
@@ -57,15 +58,15 @@ export const putPost = async (
     const user = await getUser(req);
     const post = await Post.getById(postFileDBConnector, id);
     if (!post) {
-      const error = new Error('No such post');
+      const error = new RequestError('No such post', 404);
       throw error;
     }
     if (!user) {
-      const error = new Error('Authorization Problem');
+      const error = new RequestError('Authorization Problem', 401);
       throw error;
     }
     if (!(user instanceof Admin) && !(user.id === post.creator)) {
-      const error = new Error('Authorization Problem');
+      const error = new RequestError('Authorization Problem', 401);
       throw error;
     }
     const { title, body } = req.body;
@@ -88,15 +89,15 @@ export const deletePost = async (
     const user = await getUser(req);
     const post = await Post.getById(postFileDBConnector, id);
     if (!post) {
-      const error = new Error('No such post');
+      const error = new RequestError('No such post', 404);
       throw error;
     }
     if (!user) {
-      const error = new Error('Authorization Problem');
+      const error = new RequestError('Authorization Problem', 401);
       throw error;
     }
     if (!(user instanceof Admin) && !(user.id === post.creator)) {
-      const error = new Error('Authorization Problem');
+      const error = new RequestError('Authorization Problem', 401);
       throw error;
     }
     await user.removePost(post.id);
@@ -116,7 +117,7 @@ export const postPost = async (
     const { title, body } = req.body;
     const user = await getUser(req);
     if (!user || !(user instanceof User)) {
-      const error = new Error('Authorization Problem');
+      const error = new RequestError('Authorization Problem', 401);
       throw error;
     }
     const post = new Post(title, body, user.id, postFileDBConnector);
