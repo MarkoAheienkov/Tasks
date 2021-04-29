@@ -99,7 +99,7 @@ export const deletePost = async (
       const error = new Error('Authorization Problem');
       throw error;
     }
-    await user.removeArticle(post.id);
+    await user.removePost(post.id);
     await post.remove();
     return res.json({ status: 'success' });
   } catch (err) {
