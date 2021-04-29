@@ -1,7 +1,7 @@
 import UserData from '../Interfaces/Data/User';
 
 const usersDB = {
-  users: [
+  records: [
     {
       username: 'admin',
       email: 'admin@admin.com',
@@ -18,8 +18,8 @@ const usersDB = {
       articles: ['2'],
     },
   ],
-  setUsers(users: Array<UserData>): void {
-    this.users = [...users];
+  setRecords(records: Array<UserData>): void {
+    this.records = [...records];
   },
 };
 
