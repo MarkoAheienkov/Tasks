@@ -13,9 +13,10 @@ class Admin extends User {
     userDBConnector: UserDBConnector,
     articles?: Array<string>,
     articlesToApprove?: Array<string>,
+    posts?: Array<string>,
     id?: string,
   ) {
-    super(username, email, password, userDBConnector, articles, id);
+    super(username, email, password, userDBConnector, articles, posts, id);
     this.isAdmin = true;
     this.articlesToApprove = articlesToApprove || [];
   }

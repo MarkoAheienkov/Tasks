@@ -4,14 +4,14 @@ const postsDB = {
   records: [
     {
       id: '1',
-      title: 'Article 1',
-      body: '<p>Some text for article 1</p>',
+      title: 'Post 1',
+      body: '<p>Some text for post 1</p>',
       creator: '1',
     },
     {
       id: '2',
-      title: 'Article 2',
-      body: '<p>Some text for article 2</p>',
+      title: 'Post 2',
+      body: '<p>Some text for post 2</p>',
       creator: '2',
     },
   ],

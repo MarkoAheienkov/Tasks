@@ -17,6 +17,7 @@ export default class UserFactory {
       password,
       articles,
       articlesToApprove,
+      posts,
     } = userData;
     if (isAdmin) {
       user = new Admin(
@@ -26,10 +27,19 @@ export default class UserFactory {
         userDBConnector,
         articles,
         articlesToApprove,
+        posts,
         id,
       );
     } else {
-      user = new User(username, email, password, userDBConnector, articles, id);
+      user = new User(
+        username,
+        email,
+        password,
+        userDBConnector,
+        articles,
+        posts,
+        id,
+      );
     }
     return user;
   }
