@@ -19,12 +19,33 @@ export const getArticles = async (
   next: NextFunction,
 ): Promise<Response | void> => {
   try {
-    const articles = await Article.getAll(articleFileDBConnector);
-    const admins = await Admin.getAllAdmins(userFileDBConnector, userFactory);
-    console.log(admins);
+    const articleModels = await Article.getAllApproved(articleFileDBConnector);
+    const articles = articleModels.map(article => article.toObject());
     return res.json({
       articles,
-      admins,
+    });
+  } catch (err) {
+    return next(err);
+  }
+};
+
+export const getNotApprovedArticles = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<Response | void> => {
+  try {
+    const user = await getUser(req);
+    if (!user || !(user instanceof Admin)) {
+      const error = new RequestError('Authorization Problem', 401);
+      throw error;
+    }
+    const articleModels = await Article.getAllNotApproved(
+      articleFileDBConnector,
+    );
+    const articles = articleModels.map(article => article.toObject());
+    return res.json({
+      articles,
     });
   } catch (err) {
     return next(err);
@@ -43,7 +64,30 @@ export const getArticleById = async (
       const error = new RequestError('No such article', 404);
       throw error;
     }
-    return res.json(article);
+    return res.json(article.toObject());
+  } catch (err) {
+    return next(err);
+  }
+};
+
+export const getArticlesUser = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<Response | void> => {
+  try {
+    const user = await getUser(req);
+    if (!user || !(user instanceof User)) {
+      const error = new RequestError('Authorization Problem', 401);
+      throw error;
+    }
+    const articles = await Article.getUserArticles(
+      articleFileDBConnector,
+      user.id,
+    );
+    return res.json({
+      articles,
+    });
   } catch (err) {
     return next(err);
   }
@@ -55,13 +99,19 @@ export const postArticle = async (
   next: NextFunction,
 ): Promise<Response | void> => {
   try {
-    const { title, body } = req.body;
+    const { title, cover, sections } = req.body;
     const user = await getUser(req);
     if (!user || !(user instanceof User)) {
       const error = new RequestError('Authorization Problem', 401);
       throw error;
     }
-    const article = new Article(title, body, user.id, articleFileDBConnector);
+    const article = new Article(
+      title,
+      cover,
+      user.id,
+      sections,
+      articleFileDBConnector,
+    );
     if (user instanceof Admin) {
       article.approved = true;
     } else {
@@ -102,9 +152,18 @@ export const putArticle = async (
       const error = new RequestError('Authorization Problem', 401);
       throw error;
     }
-    const { title, body } = req.body;
-    article.body = body;
+    const { title, cover, sections } = req.body;
+    article.cover = cover;
     article.title = title;
+    article.sections = sections;
+    if (!(user instanceof Admin)) {
+      article.approved = false;
+      await Admin.sentArticleToApprove(
+        userFileDBConnector,
+        article.id,
+        userFactory,
+      );
+    }
     await article.save();
     return res.json({ status: 'success' });
   } catch (err) {

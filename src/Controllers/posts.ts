@@ -1,16 +1,12 @@
 import { NextFunction, Request, Response } from 'express';
 import RequestError from '../Classes/Errors/RequestError';
-import UserFactory from '../Classes/Factories/UserFactory';
 import PostFileDBConnector from '../Classes/PostDBConnector/PostFileDBConnector';
-import UserFileDBConnector from '../Classes/UserDBConnectors/UserFileDBConnector';
 import getUser from '../Helpers/getUserFromQuery';
 import Admin from '../Models/Admin';
 import Post from '../Models/Post';
 import User from '../Models/User';
 
 const postFileDBConnector = new PostFileDBConnector();
-const userFileDBConnector = new UserFileDBConnector();
-const userFactory = new UserFactory();
 
 export const getPosts = async (
   req: Request,
@@ -18,12 +14,10 @@ export const getPosts = async (
   next: NextFunction,
 ): Promise<void | Response> => {
   try {
-    const posts = await Post.getAll(postFileDBConnector);
-    const admins = await Admin.getAllAdmins(userFileDBConnector, userFactory);
-    console.log(admins);
+    const postsModels = await Post.getAll(postFileDBConnector);
+    const posts = postsModels.map(post => post.toObject());
     return res.json({
       posts,
-      admins,
     });
   } catch (err) {
     return next(err);
@@ -42,7 +36,7 @@ export const getPostById = async (
       const error = new RequestError('No such post', 404);
       throw error;
     }
-    return res.json(post);
+    return res.json(post.toObject());
   } catch (err) {
     return next(err);
   }
@@ -125,6 +119,7 @@ export const postPost = async (
     await user.addPost(post.id);
     return res.json({
       status: 'success',
+      post: post.toObject(),
     });
   } catch (err) {
     return next(err);

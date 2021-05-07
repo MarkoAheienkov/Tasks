@@ -6,6 +6,10 @@ const router = Router();
 
 router.get('/', articleController.getArticles);
 
+router.get('/not-approved', articleController.getNotApprovedArticles);
+
+router.get('/user', articleController.getArticlesUser);
+
 router.get('/:id', articleController.getArticleById);
 
 router.post('/', articleController.postArticle);

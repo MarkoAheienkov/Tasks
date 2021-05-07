@@ -2,33 +2,68 @@ import ArticleDBConnector from '../Interfaces/DBConnectors/ArticleDBConnector';
 import { v4 } from 'uuid';
 import Model from '../Interfaces/Model';
 import ArticleData from '../Interfaces/Data/Article';
+import Section from '../Interfaces/Data/Section';
 
 class Article implements Model {
   title: string;
-  body: string;
+  cover: string;
   articleDBConnector: ArticleDBConnector;
   id: string;
   approved: boolean;
   creator: string;
+  sections: Array<Section>;
   constructor(
     title: string,
-    body: string,
+    cover: string,
     creator: string,
+    sections: Array<Section>,
     articleDBConnector: ArticleDBConnector,
     approved?: boolean,
     id?: string,
   ) {
     this.title = title;
-    this.body = body;
+    this.cover = cover;
     this.articleDBConnector = articleDBConnector;
     this.id = id || v4();
     this.approved = approved || false;
     this.creator = creator;
+    this.sections = sections;
   }
   static async getAll(
     articleDBConnector: ArticleDBConnector,
   ): Promise<Array<Article>> {
     const articlesData = await articleDBConnector.getAll();
+    const articles = articlesData.map((articleData: ArticleData) => {
+      return Article.toModel(articleDBConnector, articleData);
+    });
+    return articles;
+  }
+
+  static async getAllApproved(
+    articleDBConnector: ArticleDBConnector,
+  ): Promise<Array<Article>> {
+    const articlesData = await articleDBConnector.getApprovedArticles();
+    const articles = articlesData.map((articleData: ArticleData) => {
+      return Article.toModel(articleDBConnector, articleData);
+    });
+    return articles;
+  }
+
+  static async getAllNotApproved(
+    articleDBConnector: ArticleDBConnector,
+  ): Promise<Array<Article>> {
+    const articlesData = await articleDBConnector.getNotApprovedArticles();
+    const articles = articlesData.map((articleData: ArticleData) => {
+      return Article.toModel(articleDBConnector, articleData);
+    });
+    return articles;
+  }
+
+  static async getUserArticles(
+    articleDBConnector: ArticleDBConnector,
+    userId: string,
+  ): Promise<Array<Article>> {
+    const articlesData = await articleDBConnector.getArticlesByUser(userId);
     const articles = articlesData.map((articleData: ArticleData) => {
       return Article.toModel(articleDBConnector, articleData);
     });
@@ -44,12 +79,13 @@ class Article implements Model {
   }
 
   toObject(): ArticleData {
-    const { title, body, id, creator, approved } = this;
+    const { title, cover, id, creator, approved, sections } = this;
     return {
       title,
-      body,
+      cover,
       id,
       creator,
+      sections,
       approved,
     };
   }
@@ -58,8 +94,16 @@ class Article implements Model {
     articleDBConnector: ArticleDBConnector,
     articleData: ArticleData,
   ): Article {
-    const { title, body, id, approved, creator } = articleData;
-    return new Article(title, body, creator, articleDBConnector, approved, id);
+    const { title, sections, cover, id, approved, creator } = articleData;
+    return new Article(
+      title,
+      cover,
+      creator,
+      sections,
+      articleDBConnector,
+      approved,
+      id,
+    );
   }
 
   async approve(): Promise<void> {
