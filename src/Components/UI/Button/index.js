@@ -3,6 +3,9 @@ import classes from './Button.module.css';
 const Button = ({type, click, children, btnType}) => {
   const btnClasses = [classes.Button];
   switch(btnType) {
+    case('inline-primary'):
+      btnClasses.push(classes.InlinePrimary);
+      break;
     case('primary'):
       btnClasses.push(classes.Primary);
       break;

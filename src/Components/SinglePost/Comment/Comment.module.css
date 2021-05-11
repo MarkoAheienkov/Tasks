@@ -1,0 +1,11 @@
+.Comment {
+  padding: 10px;
+  text-align: left;
+  margin: 10px 0px;
+  border: 1px solid black;
+}
+
+.Text {
+  font-size: 24px;
+  padding: 10px 0px;
+}

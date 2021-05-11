@@ -7,6 +7,7 @@ import Form from "../../Components/Shared/Form";
 import Button from "../../Components/UI/Button";
 import { AiOutlineDown, AiOutlineUp } from "react-icons/ai";
 import { useSelector } from "react-redux";
+import Comments from "../../Components/SinglePost/Comments";
 
 const SinglePost = () => {
   const {id} = useParams();
@@ -17,6 +18,7 @@ const SinglePost = () => {
   const [isCommentsLoading, setIsCommentsLoading] = useState(true);
 
   const isAuth = useSelector((state) => state.isAuth);
+  const token = useSelector((state) => state.token);
 
   const [addCommentForm, setAddCommentForm] = useState({
     comment: {
@@ -30,8 +32,10 @@ const SinglePost = () => {
     }
   });
 
-  const submit = () => {
-    
+  const submit = async () => {
+    await axios.post(`/comments/${id}?auth=${token}`, {
+      text: addCommentForm.comment.value,
+    });
   };
 
   const getPost = async (id) => {
@@ -83,7 +87,7 @@ const SinglePost = () => {
     {
       isCommentsLoading?
       null:
-      null
+      <Comments comments={comments}/>
     }
 
   </section>;

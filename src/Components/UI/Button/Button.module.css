@@ -50,3 +50,15 @@
   background: var(--warn-1);
   color: white;
 }
+
+.Button.InlinePrimary {
+  display: inline;
+  border: none;
+  color: var(--basic-color-1);
+  text-align: left;
+  padding: 0;
+}
+
+.Button.InlinePrimary:hover {
+  color: black;
+}
