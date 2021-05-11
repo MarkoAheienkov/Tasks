@@ -54,6 +54,7 @@ export const getComments = async (
   try {
     const { postId } = req.params;
     const comments = await Comment.getPostComments(commentDBConnector, postId);
+    console.log(comments);
     return res.json({ comments });
   } catch (err) {
     next(err);

@@ -81,8 +81,8 @@ class Comment implements Model {
     commentDBConnector: CommentDBConnector,
     commentData: CommentData,
   ): Comment {
-    const { text, id, creator, post } = commentData;
-    return new Comment(text, creator, commentDBConnector, post, id);
+    const { text, id, creator, post, comment } = commentData;
+    return new Comment(text, creator, commentDBConnector, post, comment, id);
   }
 
   async save(): Promise<void> {
