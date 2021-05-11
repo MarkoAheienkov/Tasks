@@ -1,0 +1,22 @@
+.Subtitle {
+  font-size: 32px;
+  padding: 5px 0px;
+}
+
+.Text {
+  font-size: 24px;
+  padding: 5px 0px;
+}
+
+.Images {
+  display: flex;
+  height: 200px;
+  justify-content: space-around;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.Img {
+  max-height: 100%;
+  object-fit: cover;
+}

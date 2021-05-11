@@ -1,0 +1,33 @@
+.Sidebar {
+  position: fixed;
+  top: 0px;
+  bottom: 0px;
+  width: 300px;
+  background: white;
+  box-shadow: 2px 0px 2px 2px rgba(0, 0, 0, 0.335);
+  z-index: 1000;
+  transition: .4s;
+  transform: translateX(-100%);
+}
+
+.Sidebar.Show {
+  transform: translateX(0);
+}
+
+.Greetings {
+  text-align: center;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-bottom: 2px solid var(--basic-color-1);
+  border-top: 2px solid transparent;
+}
+
+.Links {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-direction: column;
+  list-style: none;
+}

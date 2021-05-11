@@ -1,0 +1,37 @@
+.FormControl {
+  padding: 10px 0;
+  width: 100%;
+}
+
+.Label {
+  width: 100%;
+  font-size: 24px;
+  display: block;
+  text-transform: capitalize;
+  text-align: left;
+  padding-bottom: 10px;
+}
+
+.Label::after {
+  content: ':';
+}
+
+.Input,
+.Textarea  {
+  display: block;
+  width: 100%;
+  height: 24px;
+  font-size: 20px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  height: auto;
+}
+
+.Textarea {
+  resize: none;
+}
+
+.Input:focus,
+.Textarea:focus {
+  box-shadow: 0px 0px 1px 1px #610ec7b0;
+}

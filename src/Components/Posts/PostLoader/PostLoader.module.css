@@ -1,0 +1,72 @@
+.Post {
+  display: flex;
+  margin: 10px 0;
+  border: 1px solid #ccc;
+  padding: 10px 10px 0 0;
+}
+
+.Actions {
+  min-width: 80px;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+
+.LineUp,
+.LineDown {
+  cursor: pointer;
+}
+
+.LineUp:hover {
+  color: var(--primary-1);
+}
+
+.LineDown:hover {
+  color: var(--error-1);
+}
+
+.Content {
+  text-align: left;
+  width: 100%;
+}
+
+.Title {
+  height: 20px;
+  max-width: 40%;
+  margin-bottom: 10px;
+}
+
+.Body {
+  font-size: 16px;
+  height: 20px;
+  margin-bottom: 10px;
+}
+
+
+.LoadWraper{
+  position: relative;
+  width: 100%;
+  background-color: rgb(211,211,211);
+  z-index: 44;
+  overflow: hidden;
+}
+.Activity{
+  position: absolute;
+  left: -45%;
+  height: 100%;
+  width: 45%;
+  background-image: linear-gradient(to left, rgba(251,251,251, .05), rgba(251,251,251, .3), rgba(251,251,251, .6), rgba(251,251,251, .3), rgba(251,251,251, .05));
+  background-image: -moz-linear-gradient(to left, rgba(251,251,251, .05), rgba(251,251,251, .3), rgba(251,251,251, .6), rgba(251,251,251, .3), rgba(251,251,251, .05));
+  background-image: -webkit-linear-gradient(to left, rgba(251,251,251, .05), rgba(251,251,251, .3), rgba(251,251,251, .6), rgba(251,251,251, .3), rgba(251,251,251, .05));
+  animation: loading 1s infinite;
+  z-index: 45;
+}
+
+@keyframes loading {
+  0%{
+      left: -45%;
+  }
+  100%{
+      left: 100%;
+  }
+}

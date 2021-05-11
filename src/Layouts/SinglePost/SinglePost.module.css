@@ -1,0 +1,44 @@
+.Post {
+  display: flex;
+  padding: 20px 0;
+  border-bottom: 2px solid var(--basic-color-1);
+}
+
+.Actions {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  padding-right: 10px;
+}
+
+.LineUp,
+.LineDown {
+  cursor: pointer;
+}
+
+.LineUp:hover {
+  color: var(--primary-1);
+}
+
+.LineDown:hover {
+  color: var(--error-1);
+}
+
+.Content {
+  text-align: left;
+}
+
+.Title {
+  font-size: 32px;
+  text-align: left;
+  padding-bottom: 5px;
+}
+
+.Body {
+  font-size: 20px;
+  text-align: left;
+}
+
+.Likes {
+  font-size: 18px;
+}

@@ -1,0 +1,41 @@
+.Post {
+  display: flex;
+  margin: 10px 0;
+  border: 1px solid #ccc;
+  padding: 10px 0;
+  cursor: pointer;
+}
+
+.Actions {
+  min-width: 80px;
+  display: flex;
+  /* justify-content: space-between; */
+  align-items: center;
+  flex-direction: column;
+}
+
+.LineUp,
+.LineDown {
+  cursor: pointer;
+}
+
+.LineUp:hover {
+  color: var(--primary-1);
+}
+
+.LineDown:hover {
+  color: var(--error-1);
+}
+
+.Content {
+  text-align: left;
+}
+
+.Title {
+  font-size: 24px;
+  padding-bottom: 5px;
+}
+
+.Body {
+  font-size: 16px;
+}
