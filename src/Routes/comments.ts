@@ -6,9 +6,9 @@ import middleWares from '../Middlewares';
 
 const router = Router();
 
-router.get('/:postId', commentController.getComments);
+router.get('/replies/:commentId', commentController.getReplies);
 
-router.get('/:commentId', commentController.getReplies);
+router.get('/:postId', commentController.getComments);
 
 router.post(
   '/:postId',
