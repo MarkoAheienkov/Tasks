@@ -11,8 +11,6 @@ const Comment = ({text, id}) => {
   const [isRepliesLoading, setIsRepliesLoading] = useState(false);
   const [replies, setReplies] = useState(null);
 
-  console.log('Comment', id)
-
   const [addReplyForm, setAddReplyForm] = useState({
     reply: {
       label: 'Reply',
@@ -32,7 +30,6 @@ const Comment = ({text, id}) => {
     setIsRepliesLoading(true);
     const res = await axios.get(`/comments/replies/${id}`);
     const replies = res.data.replies;
-    console.log(replies);
     setReplies(replies);
     setIsRepliesLoading(false);
   };
