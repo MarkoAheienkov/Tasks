@@ -11,15 +11,15 @@ router.get('/replies/:commentId', commentController.getReplies);
 router.get('/:postId', commentController.getComments);
 
 router.post(
-  '/:postId',
+  '/replies/:commentId',
   middleWares.isUserAuthentification,
-  commentController.postComment,
+  commentController.postReply,
 );
 
 router.post(
-  '/:commentId',
+  '/:postId',
   middleWares.isUserAuthentification,
-  commentController.postReply,
+  commentController.postComment,
 );
 
 export default router;
