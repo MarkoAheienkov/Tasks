@@ -1,12 +1,15 @@
 import { NextFunction, Request, Response } from 'express';
+import CommentFileDBConnector from '../Classes/CommentDBConnector/CommentFileDBConnector';
 import RequestError from '../Classes/Errors/RequestError';
 import PostFileDBConnector from '../Classes/PostDBConnector/PostFileDBConnector';
 import getUser from '../Helpers/getUserFromQuery';
 import Admin from '../Models/Admin';
+import Comment from '../Models/Comment';
 import Post from '../Models/Post';
 import User from '../Models/User';
 
 const postFileDBConnector = new PostFileDBConnector();
+const commentDBConnector = new CommentFileDBConnector();
 
 export const getPosts = async (
   req: Request,
@@ -94,11 +97,10 @@ export const deletePost = async (
       const error = new RequestError('Authorization Problem', 401);
       throw error;
     }
-    await user.removePost(post.id);
     await post.remove();
     return res.json({ status: 'success' });
   } catch (err) {
-    return next(err as RequestError);
+    return next(err);
   }
 };
 
@@ -116,12 +118,69 @@ export const postPost = async (
     }
     const post = new Post(title, body, user.id, postFileDBConnector);
     await post.save();
-    await user.addPost(post.id);
     return res.json({
       status: 'success',
       post: post.toObject(),
     });
   } catch (err) {
     return next(err);
+  }
+};
+
+export const postPostAddComment = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<Response | void> => {
+  try {
+    const { text } = req.body;
+    const { id } = req.params;
+    const user = await getUser(req);
+    if (!user || !(user instanceof User)) {
+      const error = new RequestError('Authorization Problem', 401);
+      throw error;
+    }
+    const post = await Post.getById(postFileDBConnector, id);
+    if (!post) {
+      const error = new RequestError('No such post', 404);
+      throw error;
+    }
+    const comment = new Comment(text, user.id, commentDBConnector, id);
+    await comment.save();
+    return res.json({
+      status: 'success',
+      comment: comment,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const postPostAddReply = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<Response | void> => {
+  try {
+    const { text } = req.body;
+    const { id } = req.params;
+    const user = await getUser(req);
+    if (!user || !(user instanceof User)) {
+      const error = new RequestError('Authorization Problem', 401);
+      throw error;
+    }
+    const comment = await Comment.getById(commentDBConnector, id);
+    if (!comment) {
+      const error = new RequestError('No such comment', 404);
+      throw error;
+    }
+    const reply = new Comment(text, user.id, commentDBConnector);
+    await reply.save();
+    return res.json({
+      status: 'success',
+      comment: reply,
+    });
+  } catch (err) {
+    next(err);
   }
 };

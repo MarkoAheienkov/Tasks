@@ -3,6 +3,7 @@ import cors from 'cors';
 
 import articleRoutes from './Routes/articles';
 import postRoutes from './Routes/posts';
+import commentRoutes from './Routes/comments';
 
 import errorHandler from './ErrorHandler/errorHandler';
 
@@ -17,6 +18,8 @@ app.use(express.json());
 app.use('/articles', articleRoutes);
 
 app.use('/posts', postRoutes);
+
+app.use('/comments', commentRoutes);
 
 app.use(errorHandler);
 

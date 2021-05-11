@@ -1,17 +1,11 @@
 import { Response, NextFunction, Request } from 'express';
 import ArticleFileDBConnector from '../Classes/ArticleDBConnector/ArticleFileDBConnector';
-import RequestError from '../Classes/Errors/RequestError';
-import UserFactory from '../Classes/Factories/UserFactory';
-import UserFileDBConnector from '../Classes/UserDBConnectors/UserFileDBConnector';
 import getUser from '../Helpers/getUserFromQuery';
 import Admin from '../Models/Admin';
 import Article from '../Models/Article';
 import User from '../Models/User';
 
 const articleFileDBConnector = new ArticleFileDBConnector();
-const userFileDBConnector = new UserFileDBConnector();
-
-const userFactory = new UserFactory();
 
 export const getArticles = async (
   req: Request,
@@ -35,11 +29,6 @@ export const getNotApprovedArticles = async (
   next: NextFunction,
 ): Promise<Response | void> => {
   try {
-    const user = await getUser(req);
-    if (!user || !(user instanceof Admin)) {
-      const error = new RequestError('Authorization Problem', 401);
-      throw error;
-    }
     const articleModels = await Article.getAllNotApproved(
       articleFileDBConnector,
     );
@@ -59,11 +48,10 @@ export const getArticleById = async (
 ): Promise<Response | void> => {
   try {
     const { id } = req.params;
-    const article = await Article.getById(articleFileDBConnector, id);
-    if (!article) {
-      const error = new RequestError('No such article', 404);
-      throw error;
-    }
+    const article = (await Article.getById(
+      articleFileDBConnector,
+      id,
+    )) as Article;
     return res.json(article.toObject());
   } catch (err) {
     return next(err);
@@ -76,11 +64,7 @@ export const getArticlesUser = async (
   next: NextFunction,
 ): Promise<Response | void> => {
   try {
-    const user = await getUser(req);
-    if (!user || !(user instanceof User)) {
-      const error = new RequestError('Authorization Problem', 401);
-      throw error;
-    }
+    const user = (await getUser(req)) as User;
     const articles = await Article.getUserArticles(
       articleFileDBConnector,
       user.id,
@@ -100,11 +84,7 @@ export const postArticle = async (
 ): Promise<Response | void> => {
   try {
     const { title, cover, sections } = req.body;
-    const user = await getUser(req);
-    if (!user || !(user instanceof User)) {
-      const error = new RequestError('Authorization Problem', 401);
-      throw error;
-    }
+    const user = (await getUser(req)) as User;
     const article = new Article(
       title,
       cover,
@@ -114,15 +94,8 @@ export const postArticle = async (
     );
     if (user instanceof Admin) {
       article.approved = true;
-    } else {
-      await Admin.sentArticleToApprove(
-        userFileDBConnector,
-        article.id,
-        userFactory,
-      );
     }
     await article.save();
-    await user.addArticle(article.id);
     return res.json({
       status: 'success',
     });
@@ -139,30 +112,16 @@ export const putArticle = async (
   try {
     const { id } = req.params;
     const user = await getUser(req);
-    const article = await Article.getById(articleFileDBConnector, id);
-    if (!article) {
-      const error = new RequestError('No such article', 404);
-      throw error;
-    }
-    if (!user) {
-      const error = new RequestError('Authorization Problem', 401);
-      throw error;
-    }
-    if (!(user instanceof Admin) && !(user.id === article.creator)) {
-      const error = new RequestError('Authorization Problem', 401);
-      throw error;
-    }
+    const article = (await Article.getById(
+      articleFileDBConnector,
+      id,
+    )) as Article;
     const { title, cover, sections } = req.body;
     article.cover = cover;
     article.title = title;
     article.sections = sections;
     if (!(user instanceof Admin)) {
       article.approved = false;
-      await Admin.sentArticleToApprove(
-        userFileDBConnector,
-        article.id,
-        userFactory,
-      );
     }
     await article.save();
     return res.json({ status: 'success' });
@@ -178,22 +137,10 @@ export const deleteArticle = async (
 ): Promise<Response | void> => {
   try {
     const { id } = req.params;
-    const user = await getUser(req);
-    const article = await Article.getById(articleFileDBConnector, id);
-    if (!article) {
-      const error = new RequestError('No such article', 404);
-      throw error;
-    }
-    if (!user) {
-      const error = new RequestError('Authorization Problem', 401);
-      throw error;
-    }
-    if (!(user instanceof Admin) && !(user.id === article.creator)) {
-      const error = new RequestError('Authorization Problem', 401);
-      throw error;
-    }
-    await Admin.removeArticleFromApprove(userFileDBConnector, id, userFactory);
-    await user.removeArticle(article.id);
+    const article = (await Article.getById(
+      articleFileDBConnector,
+      id,
+    )) as Article;
     await article.remove();
     return res.json({ status: 'success' });
   } catch (err) {
@@ -208,22 +155,11 @@ export const patchArticleApprove = async (
 ): Promise<Response | void> => {
   try {
     const { id } = req.params;
-    const user = await getUser(req);
-    if (!user || !(user instanceof Admin)) {
-      const error = new RequestError('Authorization Problem', 401);
-      throw error;
-    }
-    const article = await Article.getById(articleFileDBConnector, id);
-    if (!article) {
-      const error = new RequestError('No such article', 404);
-      throw error;
-    }
+    const article = (await Article.getById(
+      articleFileDBConnector,
+      id,
+    )) as Article;
     await article.approve();
-    await Admin.removeArticleFromApprove(
-      userFileDBConnector,
-      article.id,
-      userFactory,
-    );
     return res.json({
       status: 'success',
     });
@@ -239,22 +175,10 @@ export const deleteArticleDisapprove = async (
 ): Promise<void | Response> => {
   try {
     const { id } = req.params;
-    const user = await getUser(req);
-    const article = await Article.getById(articleFileDBConnector, id);
-    if (!article) {
-      const error = new RequestError('No such article', 404);
-      throw error;
-    }
-    if (article.approved) {
-      const error = new RequestError('Article is already approved', 409);
-      throw error;
-    }
-    if (!user || !(user instanceof Admin)) {
-      const error = new RequestError('Authorization Problem', 401);
-      throw error;
-    }
-    await Admin.removeArticleFromApprove(userFileDBConnector, id, userFactory);
-    await user.removeArticle(article.id);
+    const article = (await Article.getById(
+      articleFileDBConnector,
+      id,
+    )) as Article;
     await article.remove();
     return res.json({ status: 'success' });
   } catch (err) {

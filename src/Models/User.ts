@@ -10,15 +10,11 @@ class User implements Model {
   password: string;
   userDbConnector: UserDBConnector;
   id: string;
-  articles: Array<string>;
-  posts: Array<string>;
   constructor(
     username: string,
     email: string,
     password: string,
     userDbConnector: UserDBConnector,
-    articles?: Array<string>,
-    posts?: Array<string>,
     id?: string,
   ) {
     this.username = username;
@@ -26,8 +22,6 @@ class User implements Model {
     this.password = password;
     this.userDbConnector = userDbConnector;
     this.id = id || v4();
-    this.articles = articles || [];
-    this.posts = posts || [];
   }
   static async getByEmail(
     userDBConnector: UserDBConnector,
@@ -41,14 +35,12 @@ class User implements Model {
   }
 
   toObject(): UserData {
-    const { username, password, email, id, articles, posts } = this;
+    const { username, password, email, id } = this;
     return {
       username,
       password,
       email,
       id,
-      articles,
-      posts,
     };
   }
 
@@ -58,26 +50,6 @@ class User implements Model {
     userFactory: UserFactory,
   ): User {
     return userFactory.createUser(userDBConnector, userData);
-  }
-
-  async addArticle(articleId: string): Promise<void> {
-    this.articles.push(articleId);
-    await this.save();
-  }
-
-  async addPost(postId: string): Promise<void> {
-    this.posts.push(postId);
-    await this.save();
-  }
-
-  async removeArticle(articleId: string): Promise<void> {
-    this.articles = this.articles.filter(artId => artId !== articleId);
-    await this.save();
-  }
-
-  async removePost(postId: string): Promise<void> {
-    this.posts = this.posts.filter(pstId => pstId !== postId);
-    await this.save();
   }
 
   async remove(): Promise<void> {
