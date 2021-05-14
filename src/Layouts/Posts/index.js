@@ -5,6 +5,7 @@ import Posts from "../../Components/Posts/Posts";
 import Form from "../../Components/Shared/Form"
 import Button from "../../Components/UI/Button";
 import PostLoaders from "../../Components/Posts/PostsLoader";
+import Searching from "../../Components/UI/Searching";
 
 const PostsLayout = () => {
   const [addPostConfigForm, setAddPostConfigForm] = useState({
@@ -46,6 +47,14 @@ const PostsLayout = () => {
     setIsLoading(false);
   };
 
+  const getPostsBySearch = async (searchValue) => {
+    setIsLoading(true);
+    const res = await axios.get(`/posts?search=${searchValue}`);
+    const data = res.data;
+    setPosts(data.posts);
+    setIsLoading(false);
+  };
+
   useEffect(() => {
     getPosts();
   }, []);
@@ -64,7 +73,14 @@ const PostsLayout = () => {
     setPosts(newPosts);
   };
 
+  const search = (value) => {
+    getPostsBySearch(value);
+  }
+
   return <section className="container">
+
+    <Searching search={search} delay={500} placeholder={'Search by title'}/>
+
     {
       isAuth?
       <Form onSubmit={onSubmit} config={addPostConfigForm} setConfigChange={setAddPostConfigForm}>
