@@ -1,9 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
-import ArticleFileDBConnector from '../Classes/ArticleDBConnector/ArticleFileDBConnector';
+import ArticleDBConnector from '../Classes/ArticleDBConnector/ArticleMongoDBConnector';
 import RequestError from '../Classes/Errors/RequestError';
 import Article from '../Models/Article';
-
-const articleFileDBConnector = new ArticleFileDBConnector();
 
 const isArticleExist = async (
   req: Request,
@@ -11,8 +9,9 @@ const isArticleExist = async (
   next: NextFunction,
 ): Promise<void> => {
   try {
+    const articleDBConnector = new ArticleDBConnector();
     const { id } = req.params;
-    const article = await Article.getById(articleFileDBConnector, id);
+    const article = await Article.getById(articleDBConnector, id);
     if (!article) {
       const error = new RequestError('No such article', 404);
       throw error;

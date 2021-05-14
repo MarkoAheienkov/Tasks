@@ -1,5 +1,4 @@
 import ArticleDBConnector from '../Interfaces/DBConnectors/ArticleDBConnector';
-import { v4 } from 'uuid';
 import Model from '../Interfaces/Model';
 import ArticleData from '../Interfaces/Data/Article';
 import Section from '../Interfaces/Data/Section';
@@ -24,7 +23,7 @@ class Article implements Model {
     this.title = title;
     this.cover = cover;
     this.articleDBConnector = articleDBConnector;
-    this.id = id || v4();
+    this.id = id || articleDBConnector.generateId();
     this.approved = approved || false;
     this.creator = creator;
     this.sections = sections;

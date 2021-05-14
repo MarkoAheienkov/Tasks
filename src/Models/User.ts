@@ -1,5 +1,4 @@
 import UserDBConnector from '../Interfaces/DBConnectors/UserDBConnector';
-import { v4 } from 'uuid';
 import Model from '../Interfaces/Model';
 import UserData from '../Interfaces/Data/User';
 import UserFactory from '../Classes/Factories/UserFactory';
@@ -21,7 +20,7 @@ class User implements Model {
     this.email = email;
     this.password = password;
     this.userDbConnector = userDbConnector;
-    this.id = id || v4();
+    this.id = id || userDbConnector.generateId();
   }
   static async getByEmail(
     userDBConnector: UserDBConnector,

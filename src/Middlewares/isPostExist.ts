@@ -1,9 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import RequestError from '../Classes/Errors/RequestError';
-import PostFileDBConnector from '../Classes/PostDBConnector/PostFileDBConnector';
+import PostDBConnector from '../Classes/PostDBConnector/PostMongoDBConnector';
 import Post from '../Models/Post';
-
-const postDBConnector = new PostFileDBConnector();
 
 const isPostExist = async (
   req: Request,
@@ -11,6 +9,7 @@ const isPostExist = async (
   next: NextFunction,
 ): Promise<void> => {
   try {
+    const postDBConnector = new PostDBConnector();
     const { id } = req.params;
     const post = await Post.getById(postDBConnector, id);
     if (!post) {

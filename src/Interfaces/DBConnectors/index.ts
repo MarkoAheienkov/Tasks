@@ -4,4 +4,5 @@ export default interface DBConnector {
   updateById(id: string, newRecord: any): Promise<void>;
   removeById(id: string): Promise<void>;
   addRecord(newRecord: any): Promise<void>;
+  generateId(): string;
 }

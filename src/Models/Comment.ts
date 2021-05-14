@@ -1,4 +1,3 @@
-import { v4 } from 'uuid';
 import CommentDBConnector from '../Interfaces/DBConnectors/CommentDBConnector';
 import Model from '../Interfaces/Model';
 import CommentData from '../Interfaces/Data/Comment';
@@ -20,7 +19,7 @@ class Comment implements Model {
   ) {
     this.text = text;
     this.commentDBConnector = commentDBConnector;
-    this.id = id || v4();
+    this.id = id || commentDBConnector.generateId();
     this.creator = creator;
     this.post = post;
     this.comment = comment;

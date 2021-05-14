@@ -1,11 +1,10 @@
 import { Response, NextFunction, Request } from 'express';
-import ArticleFileDBConnector from '../Classes/ArticleDBConnector/ArticleFileDBConnector';
+// import ArticleFileDBConnector from '../Classes/ArticleDBConnector/ArticleFileDBConnector';
+import ArticleDBConnector from '../Classes/ArticleDBConnector/ArticleMongoDBConnector';
 import getUser from '../Helpers/getUserFromQuery';
 import Admin from '../Models/Admin';
 import Article from '../Models/Article';
 import User from '../Models/User';
-
-const articleFileDBConnector = new ArticleFileDBConnector();
 
 export const getArticles = async (
   req: Request,
@@ -13,7 +12,8 @@ export const getArticles = async (
   next: NextFunction,
 ): Promise<Response | void> => {
   try {
-    const articleModels = await Article.getAllApproved(articleFileDBConnector);
+    const articleDBConnector = new ArticleDBConnector();
+    const articleModels = await Article.getAllApproved(articleDBConnector);
     const articles = articleModels.map(article => article.toObject());
     return res.json({
       articles,
@@ -29,9 +29,8 @@ export const getNotApprovedArticles = async (
   next: NextFunction,
 ): Promise<Response | void> => {
   try {
-    const articleModels = await Article.getAllNotApproved(
-      articleFileDBConnector,
-    );
+    const articleDBConnector = new ArticleDBConnector();
+    const articleModels = await Article.getAllNotApproved(articleDBConnector);
     const articles = articleModels.map(article => article.toObject());
     return res.json({
       articles,
@@ -47,11 +46,9 @@ export const getArticleById = async (
   next: NextFunction,
 ): Promise<Response | void> => {
   try {
+    const articleDBConnector = new ArticleDBConnector();
     const { id } = req.params;
-    const article = (await Article.getById(
-      articleFileDBConnector,
-      id,
-    )) as Article;
+    const article = (await Article.getById(articleDBConnector, id)) as Article;
     return res.json(article.toObject());
   } catch (err) {
     return next(err);
@@ -64,11 +61,14 @@ export const getArticlesUser = async (
   next: NextFunction,
 ): Promise<Response | void> => {
   try {
+    const articleDBConnector = new ArticleDBConnector();
     const user = (await getUser(req)) as User;
-    const articles = await Article.getUserArticles(
-      articleFileDBConnector,
+    const articleModels = await Article.getUserArticles(
+      articleDBConnector,
       user.id,
     );
+    const articles = articleModels.map(model => model.toObject());
+    console.log(articles);
     return res.json({
       articles,
     });
@@ -83,6 +83,7 @@ export const postArticle = async (
   next: NextFunction,
 ): Promise<Response | void> => {
   try {
+    const articleDBConnector = new ArticleDBConnector();
     const { title, cover, sections } = req.body;
     const user = (await getUser(req)) as User;
     const article = new Article(
@@ -90,7 +91,7 @@ export const postArticle = async (
       cover,
       user.id,
       sections,
-      articleFileDBConnector,
+      articleDBConnector,
     );
     if (user instanceof Admin) {
       article.approved = true;
@@ -110,12 +111,10 @@ export const putArticle = async (
   next: NextFunction,
 ): Promise<Response | void> => {
   try {
+    const articleDBConnector = new ArticleDBConnector();
     const { id } = req.params;
     const user = await getUser(req);
-    const article = (await Article.getById(
-      articleFileDBConnector,
-      id,
-    )) as Article;
+    const article = (await Article.getById(articleDBConnector, id)) as Article;
     const { title, cover, sections } = req.body;
     article.cover = cover;
     article.title = title;
@@ -136,11 +135,9 @@ export const deleteArticle = async (
   next: NextFunction,
 ): Promise<Response | void> => {
   try {
+    const articleDBConnector = new ArticleDBConnector();
     const { id } = req.params;
-    const article = (await Article.getById(
-      articleFileDBConnector,
-      id,
-    )) as Article;
+    const article = (await Article.getById(articleDBConnector, id)) as Article;
     await article.remove();
     return res.json({ status: 'success' });
   } catch (err) {
@@ -154,11 +151,9 @@ export const patchArticleApprove = async (
   next: NextFunction,
 ): Promise<Response | void> => {
   try {
+    const articleDBConnector = new ArticleDBConnector();
     const { id } = req.params;
-    const article = (await Article.getById(
-      articleFileDBConnector,
-      id,
-    )) as Article;
+    const article = (await Article.getById(articleDBConnector, id)) as Article;
     await article.approve();
     return res.json({
       status: 'success',
@@ -174,11 +169,9 @@ export const deleteArticleDisapprove = async (
   next: NextFunction,
 ): Promise<void | Response> => {
   try {
+    const articleDBConnector = new ArticleDBConnector();
     const { id } = req.params;
-    const article = (await Article.getById(
-      articleFileDBConnector,
-      id,
-    )) as Article;
+    const article = (await Article.getById(articleDBConnector, id)) as Article;
     await article.remove();
     return res.json({ status: 'success' });
   } catch (err) {

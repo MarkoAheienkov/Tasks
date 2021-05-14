@@ -1,10 +1,9 @@
 import { NextFunction, Request, Response } from 'express';
-import CommentFileDBConnector from '../Classes/CommentDBConnector/CommentFileDBConnector';
+// import CommentFileDBConnector from '../Classes/CommentDBConnector/CommentFileDBConnector';
+import CommentDBConnector from '../Classes/CommentDBConnector/CommentMongoDBConnector';
 import getUser from '../Helpers/getUserFromQuery';
 import Comment from '../Models/Comment';
 import User from '../Models/User';
-
-const commentDBConnector = new CommentFileDBConnector();
 
 export const postComment = async (
   req: Request,
@@ -12,6 +11,7 @@ export const postComment = async (
   next: NextFunction,
 ): Promise<Response | void> => {
   try {
+    const commentDBConnector = new CommentDBConnector();
     const user = (await getUser(req)) as User;
     const { text } = req.body;
     const { postId } = req.params;
@@ -29,6 +29,7 @@ export const postReply = async (
   next: NextFunction,
 ): Promise<Response | void> => {
   try {
+    const commentDBConnector = new CommentDBConnector();
     const user = (await getUser(req)) as User;
     const { text } = req.body;
     const { commentId } = req.params;
@@ -52,8 +53,13 @@ export const getComments = async (
   next: NextFunction,
 ): Promise<Response | void> => {
   try {
+    const commentDBConnector = new CommentDBConnector();
     const { postId } = req.params;
-    const comments = await Comment.getPostComments(commentDBConnector, postId);
+    const commentModels = await Comment.getPostComments(
+      commentDBConnector,
+      postId,
+    );
+    const comments = commentModels.map(model => model.toObject());
     return res.json({ comments });
   } catch (err) {
     next(err);
@@ -66,11 +72,13 @@ export const getReplies = async (
   next: NextFunction,
 ): Promise<Response | void> => {
   try {
+    const commentDBConnector = new CommentDBConnector();
     const { commentId } = req.params;
-    const replies = await Comment.getCommentReplies(
+    const replieModels = await Comment.getCommentReplies(
       commentDBConnector,
       commentId,
     );
+    const replies = replieModels.map(model => model.toObject());
     return res.json({ replies });
   } catch (err) {
     next(err);

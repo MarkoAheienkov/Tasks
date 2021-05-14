@@ -1,4 +1,3 @@
-import { v4 } from 'uuid';
 import PostDBConnector from '../Interfaces/DBConnectors/PostDBConnector';
 import Model from '../Interfaces/Model';
 import PostData from '../Interfaces/Data/Post';
@@ -19,7 +18,7 @@ class Post implements Model {
     this.title = title;
     this.body = body;
     this.postDBConnector = postDBConnector;
-    this.id = id || v4();
+    this.id = id || postDBConnector.generateId();
     this.creator = creator;
   }
 
