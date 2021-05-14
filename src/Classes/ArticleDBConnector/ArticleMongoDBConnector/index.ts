@@ -7,6 +7,7 @@ class ArticleMongoDBConnector extends MongoDBConnector
   implements ArticleDBConnector {
   constructor() {
     super(getDB().collection('articles'));
+    this.collection.createIndex({ title: 1 });
   }
 
   async getApprovedArticles(): Promise<Array<ArticleData>> {

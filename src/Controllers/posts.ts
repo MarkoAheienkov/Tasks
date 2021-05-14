@@ -11,7 +11,13 @@ export const getPosts = async (
 ): Promise<void | Response> => {
   try {
     const postDBConnector = new PostDBConnector();
-    const postsModels = await Post.getAll(postDBConnector);
+    const { search } = req.query;
+    let postsModels;
+    if (search) {
+      postsModels = await Post.getByTitle(postDBConnector, search.toString());
+    } else {
+      postsModels = await Post.getAll(postDBConnector);
+    }
     const posts = postsModels.map(post => post.toObject());
     return res.json({
       posts,

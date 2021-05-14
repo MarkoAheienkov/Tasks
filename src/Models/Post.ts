@@ -63,6 +63,17 @@ class Post implements Model {
     }
   }
 
+  static async getByTitle(
+    postDBConnector: PostDBConnector,
+    title: string,
+  ): Promise<Array<Post>> {
+    const postsData = await postDBConnector.getPostsByTitle(title);
+    const posts = postsData.map((postData: PostData) => {
+      return Post.toModel(postDBConnector, postData);
+    });
+    return posts;
+  }
+
   async remove(): Promise<void> {
     await this.postDBConnector.removeById(this.id);
   }

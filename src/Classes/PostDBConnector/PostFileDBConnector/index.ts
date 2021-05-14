@@ -11,6 +11,11 @@ class PostFileDBConnector extends FileDBConnector implements PostDBConnector {
     const posts = this.database.records as Array<PostData>;
     return posts.filter(postData => postData.title === title);
   }
+
+  async getPostsByText(text: string): Promise<Array<PostData>> {
+    const posts = this.database.records as Array<PostData>;
+    return posts.filter(postData => postData.body === text);
+  }
 }
 
 export default PostFileDBConnector;
