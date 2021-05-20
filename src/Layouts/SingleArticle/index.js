@@ -16,6 +16,7 @@ const SingleArticle = () => {
     setIsLoading(true);
     const res = await axios.get(`/articles/${id}`);
     const post = res.data;
+    console.log(post);
     setArticle(post);
     setIsLoading(false);
   };

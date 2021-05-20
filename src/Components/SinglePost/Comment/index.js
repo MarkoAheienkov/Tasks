@@ -5,11 +5,13 @@ import { useSelector } from "react-redux";
 import axios from "../../../Axios";
 import Form from "../../Shared/Form";
 import Comments from "../Comments";
+import { useParams } from "react-router";
 
 const Comment = ({text, id}) => {
   const [isShowReplies, setIsShowreplies] = useState(false);
   const [isRepliesLoading, setIsRepliesLoading] = useState(false);
   const [replies, setReplies] = useState(null);
+  const {id: postId} = useParams();
 
   const [addReplyForm, setAddReplyForm] = useState({
     reply: {
@@ -48,6 +50,7 @@ const Comment = ({text, id}) => {
   const submit = async () => {
     await axios.post(`/comments/replies/${id}?auth=${token}`, {
       text: addReplyForm.reply.value,
+      postId,
     });
   };
   
