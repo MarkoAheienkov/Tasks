@@ -141,7 +141,7 @@ class ArticleSQLDBConnector extends SQLDBConnector
 
   async getArticlesByTitle(title: string): Promise<Array<ArticleData>> {
     const res = await this.connector.query(
-      `SELECT * FROM ARTICLES WHERE title='${title}'`,
+      `SELECT * FROM ARTICLES WHERE title ILIKE '%${title}%'`,
     );
     return this.rowsToArticles(res.rows);
   }

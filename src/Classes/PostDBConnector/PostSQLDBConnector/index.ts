@@ -53,8 +53,9 @@ class PostSQLDBConnector extends SQLDBConnector implements PostDBConnector {
 
   async getPostsByTitle(title: string): Promise<Array<PostData>> {
     const res = await this.connector.query(
-      `SELECT * FROM posts WHERE title='${title}'`,
+      `SELECT * FROM posts WHERE title ILIKE '%${title}%'`,
     );
+    console.log(res);
     return this.rowsToPostsData(res.rows);
   }
 
