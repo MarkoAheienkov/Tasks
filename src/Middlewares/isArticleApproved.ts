@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import ArticleDBConnector from '../Classes/ArticleDBConnector/ArticleMongoDBConnector';
+import ArticleDBConnector from '../Classes/ArticleDBConnector/ArticleSQLDBConnector';
 import RequestError from '../Classes/Errors/RequestError';
 import Article from '../Models/Article';
 

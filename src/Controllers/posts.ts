@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import PostDBConnector from '../Classes/PostDBConnector/PostMongoDBConnector';
+import PostDBConnector from '../Classes/PostDBConnector/PostSQLDBConnector';
 import getUser from '../Helpers/getUserFromQuery';
 import Post from '../Models/Post';
 import User from '../Models/User';

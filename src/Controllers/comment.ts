@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 // import CommentFileDBConnector from '../Classes/CommentDBConnector/CommentFileDBConnector';
-import CommentDBConnector from '../Classes/CommentDBConnector/CommentMongoDBConnector';
+import CommentDBConnector from '../Classes/CommentDBConnector/CommentSQLDBConnector';
 import getUser from '../Helpers/getUserFromQuery';
 import Comment from '../Models/Comment';
 import User from '../Models/User';
@@ -31,13 +31,13 @@ export const postReply = async (
   try {
     const commentDBConnector = new CommentDBConnector();
     const user = (await getUser(req)) as User;
-    const { text } = req.body;
+    const { text, postId } = req.body;
     const { commentId } = req.params;
     const reply = new Comment(
       text,
       user.id,
       commentDBConnector,
-      undefined,
+      postId,
       commentId,
     );
     await reply.save();

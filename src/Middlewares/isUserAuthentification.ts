@@ -11,6 +11,7 @@ export const isUserAuthetificated = async (
   try {
     const user = await getUser(req);
     if (!user || !(user instanceof User)) {
+      console.log('[isUserAuthetificated]', user);
       const error = new RequestError('Authorization Problem', 403);
       throw error;
     }

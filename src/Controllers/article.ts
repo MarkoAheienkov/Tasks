@@ -1,6 +1,6 @@
 import { Response, NextFunction, Request } from 'express';
 // import ArticleFileDBConnector from '../Classes/ArticleDBConnector/ArticleFileDBConnector';
-import ArticleDBConnector from '../Classes/ArticleDBConnector/ArticleMongoDBConnector';
+import ArticleDBConnector from '../Classes/ArticleDBConnector/ArticleSQLDBConnector';
 import getUser from '../Helpers/getUserFromQuery';
 import Admin from '../Models/Admin';
 import Article from '../Models/Article';
@@ -68,7 +68,6 @@ export const getArticlesUser = async (
       user.id,
     );
     const articles = articleModels.map(model => model.toObject());
-    console.log(articles);
     return res.json({
       articles,
     });

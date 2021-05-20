@@ -1,9 +1,10 @@
 import { NextFunction, Request, Response } from 'express';
-import ArticleDBConnector from '../Classes/ArticleDBConnector/ArticleMongoDBConnector';
+import ArticleDBConnector from '../Classes/ArticleDBConnector/ArticleSQLDBConnector';
 import RequestError from '../Classes/Errors/RequestError';
 import getUser from '../Helpers/getUserFromQuery';
 import Admin from '../Models/Admin';
 import Article from '../Models/Article';
+import User from '../Models/User';
 
 const isArticleCreator = async (
   req: Request,
@@ -14,8 +15,8 @@ const isArticleCreator = async (
     const articleDBConnector = new ArticleDBConnector();
     const { id } = req.params;
     const article = (await Article.getById(articleDBConnector, id)) as Article;
-    const user = await getUser(req);
-    if (!(user instanceof Admin) || article.creator === user.id) {
+    const user = (await getUser(req)) as User;
+    if (!(user instanceof Admin) && article.creator !== user.id) {
       const error = new RequestError('Authorization Problem', 403);
       throw error;
     }
