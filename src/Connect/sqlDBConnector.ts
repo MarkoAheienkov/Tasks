@@ -2,8 +2,6 @@ import { Pool, PoolClient } from 'pg';
 
 import RequestError from '../Classes/Errors/RequestError';
 
-//'mongodb://localhost:27017/forum'
-
 let connector: PoolClient;
 
 export const connect = async (): Promise<void> => {
