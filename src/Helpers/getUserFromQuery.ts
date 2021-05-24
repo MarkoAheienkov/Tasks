@@ -1,31 +1,41 @@
 import UserMongoDBConnectors from '../Classes/UserDBConnectors/UserMongoDBConnectors';
-import User from '../Models/User';
+import UserRepository from '../Repositories/User';
 import UserFactory from '../Classes/Factories/UserFactory';
-import { Request } from 'express';
-import Admin from '../Models/Admin';
+import AdminRepository from '../Repositories/Admin';
+import { LOCATIONS } from './constants';
+import constructLocationError from './constructLocationError';
 
-const getUser = async (req: Request): Promise<void | User | Admin> => {
-  const { auth } = req.query;
-  const userDBConnector = new UserMongoDBConnectors();
-  const userFactory = new UserFactory();
-  let user;
-  switch (auth) {
-    case 'admin':
-      user = await User.getByEmail(
-        userDBConnector,
-        'admin@admin.com',
-        userFactory,
-      );
-      break;
-    case 'user':
-      user = await User.getByEmail(
-        userDBConnector,
-        'user@user.com',
-        userFactory,
-      );
-      break;
+const getUser = async (
+  auth: string,
+): Promise<void | UserRepository | AdminRepository> => {
+  try {
+    const userDBConnector = new UserMongoDBConnectors();
+    const userFactory = new UserFactory();
+    let user;
+    switch (auth) {
+      case 'admin':
+        user = await UserRepository.getByEmail(
+          userDBConnector,
+          'admin@admin.com',
+          userFactory,
+        );
+        break;
+      case 'user':
+        user = await UserRepository.getByEmail(
+          userDBConnector,
+          'user@user.com',
+          userFactory,
+        );
+        break;
+    }
+    return user;
+  } catch (err) {
+    const locationError = constructLocationError(
+      err,
+      LOCATIONS.GET_USER_FROM_QUERY,
+    );
+    throw locationError;
   }
-  return user;
 };
 
 export default getUser;
