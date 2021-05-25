@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import RequestError from '../Classes/Errors/RequestError';
-import PostDBConnector from '../Classes/PostDBConnector/PostMongoDBConnector';
+import PostDBConnector from '../Classes/PostDBConnector/PostSQLDBConnector';
 import { ERROR_MESSAGES, STATUS_CODES } from '../Constants';
 import constructLocationError from '../Helpers/constructLocationError';
 import isRequestError from '../Helpers/isRequestError';

@@ -1,4 +1,4 @@
-import UserMongoDBConnectors from '../Classes/UserDBConnectors/UserMongoDBConnectors';
+import UserSQLDBConnector from '../Classes/UserDBConnectors/UserSQLDBConnector';
 import UserRepository from '../Repositories/User';
 import UserFactory from '../Classes/Factories/UserFactory';
 import AdminRepository from '../Repositories/Admin';
@@ -9,7 +9,7 @@ const getUser = async (
   auth: string,
 ): Promise<void | UserRepository | AdminRepository> => {
   try {
-    const userDBConnector = new UserMongoDBConnectors();
+    const userDBConnector = new UserSQLDBConnector();
     const userFactory = new UserFactory();
     let user;
     switch (auth) {

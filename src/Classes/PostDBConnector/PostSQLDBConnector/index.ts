@@ -62,6 +62,7 @@ class PostSQLDBConnector extends SQLDBConnector implements PostDBConnector {
 
   async getById(id: string): Promise<PostData> {
     try {
+      console.log(LOCATIONS.GET_BY_ID);
       const connector = await sqlConnector.getConnect();
       const res = await connector.query(this.getByIdQuery(id));
       return res.rows[0];

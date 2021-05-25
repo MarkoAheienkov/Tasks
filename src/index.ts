@@ -6,7 +6,7 @@ import postRoutes from './Routes/posts';
 import commentRoutes from './Routes/comments';
 
 import errorHandler from './ErrorHandler/errorHandler';
-import mongoConnector from './Connect/mongoDBConnector';
+import sqlConnector from './Connect/sqlDBConnector';
 import serverErrorLogger from './Logger/ServerErrorLogger';
 
 const app = express();
@@ -27,7 +27,7 @@ app.use(errorHandler);
 
 const startServer = async (): Promise<void> => {
   try {
-    await mongoConnector.getConnect();
+    await sqlConnector.getConnect();
     app.listen(PORT, () => {
       console.log('Server is running on PORT:', PORT);
     });

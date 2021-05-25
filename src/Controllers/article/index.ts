@@ -1,5 +1,5 @@
 import { Response, NextFunction, Request } from 'express';
-import ArticleDBConnector from '../../Classes/ArticleDBConnector/ArticleMongoDBConnector';
+import ArticleDBConnector from '../../Classes/ArticleDBConnector/ArticleSQLDBConnector';
 import constructLocationError from '../../Helpers/constructLocationError';
 import getUser from '../../Helpers/getUserFromQuery';
 import AdminRepository from '../../Repositories/Admin';

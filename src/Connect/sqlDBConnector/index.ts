@@ -36,6 +36,7 @@ export class SQLConnector {
       this.removeErrorListeners();
       this.poolClient = await this.pool.connect();
       this.addErrorListeners();
+      this.isConnected = true;
       return this.poolClient;
     } catch (err) {
       const locationError = constructLocationError(err, LOCATIONS.RECONNECT);
