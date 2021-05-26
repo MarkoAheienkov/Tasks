@@ -11,8 +11,8 @@ export class SQLConnector {
       host: 'localhost',
       port: 5432,
       database: 'forum',
-      password: 'murko',
-      user: 'murko',
+      password: 'verysecretepassword',
+      user: 'super_user',
     });
     this.isConnected = false;
     this.reconnect = this.reconnect.bind(this);
@@ -73,6 +73,6 @@ export class SQLConnector {
   }
 }
 
-const mongoConnector = new SQLConnector();
+const sqlConncetor = new SQLConnector();
 
-export default mongoConnector;
+export default sqlConncetor;

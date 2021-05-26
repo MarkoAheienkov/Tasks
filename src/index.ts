@@ -8,6 +8,8 @@ import commentRoutes from './Routes/comments';
 import errorHandler from './ErrorHandler/errorHandler';
 import sqlConnector from './Connect/sqlDBConnector';
 import serverErrorLogger from './Logger/ServerErrorLogger';
+import createTables from './Init';
+import createErrorMessage from './Helpers/createErrorMessage';
 
 const app = express();
 
@@ -28,13 +30,14 @@ app.use(errorHandler);
 const startServer = async (): Promise<void> => {
   try {
     await sqlConnector.getConnect();
+    await createTables();
     app.listen(PORT, () => {
       console.log('Server is running on PORT:', PORT);
     });
   } catch (err) {
     serverErrorLogger.log({
       level: 'error',
-      message: err,
+      message: createErrorMessage(err),
     });
   }
 };

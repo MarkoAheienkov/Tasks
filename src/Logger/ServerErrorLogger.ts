@@ -13,7 +13,7 @@ const logger = winston.createLogger({
   level: 'error',
   transports: [
     new winston.transports.Console({
-      format: winston.format.errors(),
+      format: winston.format.prettyPrint(),
     }),
     new winston.transports.File({
       filename: pathToLogFile,

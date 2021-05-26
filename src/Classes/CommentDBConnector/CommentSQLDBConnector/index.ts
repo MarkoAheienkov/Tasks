@@ -9,12 +9,11 @@ class CommentSQLDBConnector extends SQLDBConnector
   implements CommentDBConnector {
   constructor() {
     super();
-    this.createTables();
   }
 
   private createTableCommentsQuery(): any {
     return {
-      text: `CREATE TABLE IF NOT EXISTS COMMENTS(
+      text: `CREATE TABLE IF NOT EXISTS juggling.COMMENTS(
         comment_id serial PRIMARY KEY,
         text text,
         creator integer,
@@ -22,10 +21,10 @@ class CommentSQLDBConnector extends SQLDBConnector
         is_reply boolean,
         CONSTRAINT fk_creator
           FOREIGN KEY(creator) 
-          REFERENCES users(user_id),
+          REFERENCES juggling.users(user_id),
         CONSTRAINT fk_post
           FOREIGN KEY(post_id) 
-          REFERENCES posts(post_id)
+          REFERENCES juggling.posts(post_id)
           on delete cascade
       );`,
     };
@@ -33,16 +32,16 @@ class CommentSQLDBConnector extends SQLDBConnector
 
   private createTableRepliesQuery(): any {
     return {
-      text: `CREATE TABLE IF NOT EXISTS REPLIES(
+      text: `CREATE TABLE IF NOT EXISTS juggling.REPLIES(
         comment_id integer,
         reply_id integer,
         CONSTRAINT fk_comment
           FOREIGN KEY(comment_id) 
-          REFERENCES comments(comment_id)
+          REFERENCES juggling.comments(comment_id)
           on delete cascade,
         CONSTRAINT fk_reply
           FOREIGN KEY(reply_id) 
-          REFERENCES comments(comment_id)
+          REFERENCES juggling.comments(comment_id)
           on delete cascade
     );`,
     };
@@ -66,10 +65,26 @@ class CommentSQLDBConnector extends SQLDBConnector
     }
   }
 
+  async init(): Promise<void> {
+    try {
+      await this.createTables();
+    } catch (err) {
+      const locationError = constructLocationError(err, LOCATIONS.INIT);
+      throw locationError;
+    }
+  }
+
+  private getAllQuery(): any {
+    return {
+      text: `SELECT * FROM juggling.COMMENTS`,
+      values: [],
+    };
+  }
+
   async getAll(): Promise<Array<CommentData>> {
     try {
       const connector = await sqlConnector.getConnect();
-      const res = await connector.query(`SELECT * FROM COMMENTS`);
+      const res = await connector.query(this.getAllQuery());
       return res.rows;
     } catch (err) {
       const locationError = constructLocationError(err, LOCATIONS.GET_ALL);
@@ -79,7 +94,7 @@ class CommentSQLDBConnector extends SQLDBConnector
 
   private getByIdQuery(id: any): any {
     return {
-      text: `SELECT * FROM COMMENTS where comment_id=$1`,
+      text: `SELECT * FROM juggling.COMMENTS where comment_id=$1`,
       values: [id],
     };
   }
@@ -97,7 +112,7 @@ class CommentSQLDBConnector extends SQLDBConnector
 
   private addRecordCommentQuery(record: CommentData): any {
     return {
-      text: `INSERT INTO COMMENTS(text, creator, post_id, is_reply)
+      text: `INSERT INTO juggling.COMMENTS(text, creator, post_id, is_reply)
       VALUES ( $1, $2, $3, $4)
       Returning comment_id`,
       values: [
@@ -111,7 +126,7 @@ class CommentSQLDBConnector extends SQLDBConnector
 
   private addRecordReplyQuery(record: CommentData, recordId: string): any {
     return {
-      text: `INSERT INTO REPLIES(comment_id, reply_Id)
+      text: `INSERT INTO juggling.REPLIES(comment_id, reply_Id)
       VALUES ($1, $2);`,
       values: [record.comment, recordId],
     };
@@ -137,7 +152,7 @@ class CommentSQLDBConnector extends SQLDBConnector
 
   private updateByIdQuery(id: string, text: string): any {
     return {
-      text: `UPDATE COMMENTS
+      text: `UPDATE juggling.COMMENTS
       SET
         text='$1',
       WHERE
@@ -158,7 +173,7 @@ class CommentSQLDBConnector extends SQLDBConnector
 
   private removeByIdQuery(id: string): any {
     return {
-      text: `DELETE FROM COMMENTS WHERE comment_id=$1`,
+      text: `DELETE FROM juggling.COMMENTS WHERE comment_id=$1`,
       values: [id],
     };
   }
@@ -175,9 +190,9 @@ class CommentSQLDBConnector extends SQLDBConnector
 
   private getCommentsRepliesQuery(commentId: string): any {
     return {
-      text: `SELECT * FROM COMMENTS
-       INNER JOIN REPLIES ON comments.comment_id=replies.reply_id
-       where replies.comment_id=$1`,
+      text: `SELECT * FROM juggling.COMMENTS
+       INNER JOIN REPLIES ON juggling.comments.comment_id=juggling.replies.reply_id
+       where juggling.replies.comment_id=$1`,
       values: [commentId],
     };
   }
@@ -200,7 +215,7 @@ class CommentSQLDBConnector extends SQLDBConnector
 
   private getPostCommentsQuery(postId: string): any {
     return {
-      text: `SELECT * FROM COMMENTS WHERE post_id=$1 AND is_reply=false`,
+      text: `SELECT * FROM juggling.COMMENTS WHERE post_id=$1 AND is_reply=false`,
       values: [postId],
     };
   }

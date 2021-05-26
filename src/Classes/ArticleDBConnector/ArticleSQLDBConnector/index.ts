@@ -9,12 +9,11 @@ class ArticleSQLDBConnector extends SQLDBConnector
   implements ArticleDBConnector {
   constructor() {
     super();
-    this.createTables();
   }
 
   private createTableArticlesQuery(): any {
     return {
-      text: `CREATE TABLE IF NOT EXISTS ARTICLES(
+      text: `CREATE TABLE IF NOT EXISTS juggling.ARTICLES(
         article_id serial Primary key,
         creator integer,
         title varchar(255),
@@ -22,7 +21,7 @@ class ArticleSQLDBConnector extends SQLDBConnector
         approved boolean,
         CONSTRAINT fk_creator
           FOREIGN KEY(creator) 
-          REFERENCES users(user_id)
+          REFERENCES juggling.users(user_id)
       )`,
       values: [],
     };
@@ -30,14 +29,14 @@ class ArticleSQLDBConnector extends SQLDBConnector
 
   private createTableSectionsQuery(): any {
     return {
-      text: `CREATE TABLE IF NOT EXISTS SECTIONS(
+      text: `CREATE TABLE IF NOT EXISTS juggling.SECTIONS(
         section_id SERIAL Primary key,
         section_title varchar(255),
         text text,
         article_id integer,
         CONSTRAINT fk_article
           FOREIGN KEY(article_id) 
-          REFERENCES articles(article_id)
+          REFERENCES juggling.articles(article_id)
           on delete cascade
       )`,
       values: [],
@@ -46,13 +45,13 @@ class ArticleSQLDBConnector extends SQLDBConnector
 
   private createTableImagesQuery(): any {
     return {
-      text: `CREATE TABLE IF NOT EXISTS IMAGES(
+      text: `CREATE TABLE IF NOT EXISTS juggling.IMAGES(
           image_id SERIAL Primary Key,
           section_id integer,
           image_url varchar(255),
           CONSTRAINT fk_section
             FOREIGN KEY(section_id) 
-            REFERENCES sections(section_id)
+            REFERENCES juggling.sections(section_id)
             on delete cascade
       )`,
       values: [],
@@ -78,10 +77,51 @@ class ArticleSQLDBConnector extends SQLDBConnector
     }
   }
 
+  private createIndexQuery(): any {
+    return {
+      text: `CREATE INDEX article_id_index on juggling.articles(article_id)`,
+      values: [],
+    };
+  }
+
+  async createIndex(): Promise<void> {
+    try {
+      const connector = await sqlConnector.getConnect();
+      await connector.query('BEGIN');
+      await connector.query(this.createIndexQuery());
+      await connector.query('COMMIT');
+    } catch (err) {
+      const connector = await sqlConnector.getConnect();
+      await connector.query('ROLLBACK');
+      const locationError = constructLocationError(
+        err,
+        LOCATIONS.CREATE_TABLES,
+      );
+      throw locationError;
+    }
+  }
+
+  async init(): Promise<void> {
+    try {
+      await this.createTables();
+      await this.createIndex();
+    } catch (err) {
+      const locationError = constructLocationError(err, LOCATIONS.INIT);
+      throw locationError;
+    }
+  }
+
+  private getAllQuery(): any {
+    return {
+      text: `SELECT * FROM juggling.ARTICLES`,
+      values: [],
+    };
+  }
+
   async getAll(): Promise<Array<ArticleData>> {
     try {
       const connector = await sqlConnector.getConnect();
-      const res = await connector.query(`SELECT * FROM ARTICLES`);
+      const res = await connector.query(this.getAllQuery());
       return this.rowsToArticles(res.rows);
     } catch (err) {
       const locationError = constructLocationError(err, LOCATIONS.GET_ALL);
@@ -91,7 +131,7 @@ class ArticleSQLDBConnector extends SQLDBConnector
 
   private getByIdQuery(id: any): any {
     return {
-      text: `SELECT * FROM ARTICLES
+      text: `SELECT * FROM juggling.ARTICLES
       LEFT JOIN SECTIONS using(article_id)
       LEFT JOIN IMAGES using(section_id)
       where article_id=$1
@@ -115,7 +155,7 @@ class ArticleSQLDBConnector extends SQLDBConnector
     return {
       text: `
       INSERT INTO 
-      ARTICLES(creator, cover, title, approved)
+      juggling.ARTICLES(creator, cover, title, approved)
       VALUES ($1, $2, $3, $4)
       RETURNING article_id`,
       values: [record.creator, record.cover, record.title, record.approved],
@@ -126,7 +166,7 @@ class ArticleSQLDBConnector extends SQLDBConnector
     return {
       text: `
       INSERT INTO 
-      SECTIONS(section_title, text, article_id)
+      juggling.SECTIONS(section_title, text, article_id)
       VALUES ($1, $2, $3)
       RETURNING section_id`,
       values: [section.title, section.text, articleId],
@@ -137,7 +177,7 @@ class ArticleSQLDBConnector extends SQLDBConnector
     return {
       text: `
       INSERT INTO 
-      IMAGES(section_id, image_url)
+      juggling.IMAGES(section_id, image_url)
       VALUES ($1, $2)`,
       values: [sectionId, imageUrl],
     };
@@ -174,7 +214,7 @@ class ArticleSQLDBConnector extends SQLDBConnector
 
   private removeByIdQuery(id: string): any {
     return {
-      text: `DELETE FROM ARTICLES WHERE article_id=$1`,
+      text: `DELETE FROM juggling.ARTICLES WHERE article_id=$1`,
       values: [id],
     };
   }
@@ -206,7 +246,7 @@ class ArticleSQLDBConnector extends SQLDBConnector
 
   private getArticlesByUserQuery(userId: string): any {
     return {
-      text: `SELECT * FROM ARTICLES WHERE creator=$1`,
+      text: `SELECT * FROM juggling.ARTICLES WHERE creator=$1`,
       values: [userId],
     };
   }
@@ -227,7 +267,7 @@ class ArticleSQLDBConnector extends SQLDBConnector
 
   private getArticlesByApproveQuery(approve: boolean): any {
     return {
-      text: `SELECT * FROM ARTICLES WHERE approved=$1`,
+      text: `SELECT * FROM juggling.ARTICLES WHERE approved=$1`,
       values: [approve],
     };
   }
@@ -262,7 +302,7 @@ class ArticleSQLDBConnector extends SQLDBConnector
 
   private getArticlesByTitleQuery(title: string): any {
     return {
-      text: `SELECT * FROM ARTICLES WHERE title ILIKE $1`,
+      text: `SELECT * FROM juggling.ARTICLES WHERE title ILIKE $1`,
       values: [title],
     };
   }

@@ -3,6 +3,8 @@ import isRequestError from '../Helpers/isRequestError';
 import RequestError from '../Classes/Errors/RequestError';
 import { ERROR_MESSAGES, STATUS_CODES } from '../Constants';
 import serverErrorLogger from '../Logger/ServerErrorLogger';
+import createErrorMessage from '../Helpers/createErrorMessage';
+import LocationError from '../Classes/Errors/LoactionError';
 
 const errorHandler = (
   err: Error,
@@ -18,7 +20,7 @@ const errorHandler = (
   } else {
     serverErrorLogger.log({
       level: 'error',
-      message: err.message,
+      message: createErrorMessage(err as LocationError),
     });
     return res.status(STATUS_CODES.SERVER_ERROR).json({
       message: ERROR_MESSAGES.SERVER_ERROR,
