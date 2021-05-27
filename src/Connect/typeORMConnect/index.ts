@@ -4,6 +4,7 @@ import Articles from '../../Entities/article';
 import Comments from '../../Entities/comment';
 import Images from '../../Entities/image';
 import Posts from '../../Entities/post';
+import Replies from '../../Entities/reply';
 import Sections from '../../Entities/section';
 import Users from '../../Entities/user';
 import constructLocationError from '../../Helpers/constructLocationError';
@@ -40,7 +41,7 @@ export class TypeORMConnector {
         username: 'super_user',
         synchronize: true,
         type: 'postgres',
-        entities: [Users, Posts, Comments, Articles, Sections, Images],
+        entities: [Users, Posts, Comments, Articles, Sections, Images, Replies],
         schema: 'juggling',
       });
       this.isConnected = true;
