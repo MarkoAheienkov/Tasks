@@ -1,3 +1,5 @@
+import 'reflect-metadata';
+
 import express from 'express';
 import cors from 'cors';
 
@@ -6,9 +8,10 @@ import postRoutes from './Routes/posts';
 import commentRoutes from './Routes/comments';
 
 import errorHandler from './ErrorHandler/errorHandler';
-import sqlConnector from './Connect/sqlDBConnector';
+// import sqlConnector from './Connect/sqlDBConnector';
 import serverErrorLogger from './Logger/ServerErrorLogger';
-import createTables from './Init';
+// import createTables from './Init';
+import typeORMConnector from './Connect/typeORMConnect';
 import createErrorMessage from './Helpers/createErrorMessage';
 
 const app = express();
@@ -29,8 +32,9 @@ app.use(errorHandler);
 
 const startServer = async (): Promise<void> => {
   try {
-    await sqlConnector.getConnect();
-    await createTables();
+    // await sqlConnector.getConnect();
+    // await createTables();
+    await typeORMConnector.getConnect();
     app.listen(PORT, () => {
       console.log('Server is running on PORT:', PORT);
     });

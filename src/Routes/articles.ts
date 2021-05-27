@@ -1,8 +1,8 @@
 import { Router } from 'express';
 
-import * as articleController from '../Controllers/article';
+import * as articleController from '../TypeORMControllers/article';
 
-import middleWares from '../Middlewares';
+import middleWares from '../TypeORMMiddlewares';
 
 const router = Router();
 

@@ -132,8 +132,8 @@ class ArticleSQLDBConnector extends SQLDBConnector
   private getByIdQuery(id: any): any {
     return {
       text: `SELECT * FROM juggling.ARTICLES
-      LEFT JOIN SECTIONS using(article_id)
-      LEFT JOIN IMAGES using(section_id)
+      LEFT JOIN juggling.SECTIONS using(article_id)
+      LEFT JOIN juggling.IMAGES using(section_id)
       where article_id=$1
      `,
       values: [id],
