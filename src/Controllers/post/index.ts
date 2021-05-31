@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import PostDBConnector from '../../Classes/PostDBConnector/PostMongoDBConnector';
+import PostDBConnector from '../../Classes/PostDBConnector/PostSQLDBConnector';
 import constructLocationError from '../../Helpers/constructLocationError';
 import getUser from '../../Helpers/getUserFromQuery';
 import PostRepository from '../../Repositories/Post';

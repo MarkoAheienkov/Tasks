@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import CommentDBConnector from '../../Classes/CommentDBConnector/CommentMongoDBConnector';
+import CommentDBConnector from '../../Classes/CommentDBConnector/CommentSQLDBConnector';
 import constructLocationError from '../../Helpers/constructLocationError';
 import getUser from '../../Helpers/getUserFromQuery';
 import CommentRepository from '../../Repositories/Comment';
