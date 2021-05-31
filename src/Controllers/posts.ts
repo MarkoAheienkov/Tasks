@@ -1,16 +1,8 @@
 import { NextFunction, Request, Response } from 'express';
-import RequestError from '../Classes/Errors/RequestError';
-import UserFactory from '../Classes/Factories/UserFactory';
-import PostFileDBConnector from '../Classes/PostDBConnector/PostFileDBConnector';
-import UserFileDBConnector from '../Classes/UserDBConnectors/UserFileDBConnector';
+import PostDBConnector from '../Classes/PostDBConnector/PostMongoDBConnector';
 import getUser from '../Helpers/getUserFromQuery';
-import Admin from '../Models/Admin';
 import Post from '../Models/Post';
 import User from '../Models/User';
-
-const postFileDBConnector = new PostFileDBConnector();
-const userFileDBConnector = new UserFileDBConnector();
-const userFactory = new UserFactory();
 
 export const getPosts = async (
   req: Request,
@@ -18,12 +10,17 @@ export const getPosts = async (
   next: NextFunction,
 ): Promise<void | Response> => {
   try {
-    const posts = await Post.getAll(postFileDBConnector);
-    const admins = await Admin.getAllAdmins(userFileDBConnector, userFactory);
-    console.log(admins);
+    const postDBConnector = new PostDBConnector();
+    const { search } = req.query;
+    let postsModels;
+    if (search) {
+      postsModels = await Post.getByTitle(postDBConnector, search.toString());
+    } else {
+      postsModels = await Post.getAll(postDBConnector);
+    }
+    const posts = postsModels.map(post => post.toObject());
     return res.json({
       posts,
-      admins,
     });
   } catch (err) {
     return next(err);
@@ -36,13 +33,10 @@ export const getPostById = async (
   next: NextFunction,
 ): Promise<void | Response> => {
   try {
+    const postDBConnector = new PostDBConnector();
     const { id } = req.params;
-    const post = await Post.getById(postFileDBConnector, id);
-    if (!post) {
-      const error = new RequestError('No such post', 404);
-      throw error;
-    }
-    return res.json(post);
+    const post = (await Post.getById(postDBConnector, id)) as Post;
+    return res.json(post.toObject());
   } catch (err) {
     return next(err);
   }
@@ -54,21 +48,9 @@ export const putPost = async (
   next: NextFunction,
 ): Promise<void | Response> => {
   try {
+    const postDBConnector = new PostDBConnector();
     const { id } = req.params;
-    const user = await getUser(req);
-    const post = await Post.getById(postFileDBConnector, id);
-    if (!post) {
-      const error = new RequestError('No such post', 404);
-      throw error;
-    }
-    if (!user) {
-      const error = new RequestError('Authorization Problem', 401);
-      throw error;
-    }
-    if (!(user instanceof Admin) && !(user.id === post.creator)) {
-      const error = new RequestError('Authorization Problem', 401);
-      throw error;
-    }
+    const post = (await Post.getById(postDBConnector, id)) as Post;
     const { title, body } = req.body;
     post.body = body;
     post.title = title;
@@ -85,26 +67,13 @@ export const deletePost = async (
   next: NextFunction,
 ): Promise<Response | void> => {
   try {
+    const postDBConnector = new PostDBConnector();
     const { id } = req.params;
-    const user = await getUser(req);
-    const post = await Post.getById(postFileDBConnector, id);
-    if (!post) {
-      const error = new RequestError('No such post', 404);
-      throw error;
-    }
-    if (!user) {
-      const error = new RequestError('Authorization Problem', 401);
-      throw error;
-    }
-    if (!(user instanceof Admin) && !(user.id === post.creator)) {
-      const error = new RequestError('Authorization Problem', 401);
-      throw error;
-    }
-    await user.removePost(post.id);
+    const post = (await Post.getById(postDBConnector, id)) as Post;
     await post.remove();
     return res.json({ status: 'success' });
   } catch (err) {
-    return next(err as RequestError);
+    return next(err);
   }
 };
 
@@ -114,17 +83,14 @@ export const postPost = async (
   next: NextFunction,
 ): Promise<Response | void> => {
   try {
+    const postDBConnector = new PostDBConnector();
     const { title, body } = req.body;
-    const user = await getUser(req);
-    if (!user || !(user instanceof User)) {
-      const error = new RequestError('Authorization Problem', 401);
-      throw error;
-    }
-    const post = new Post(title, body, user.id, postFileDBConnector);
+    const user = (await getUser(req)) as User;
+    const post = new Post(title, body, user.id, postDBConnector);
     await post.save();
-    await user.addPost(post.id);
     return res.json({
       status: 'success',
+      post: post.toObject(),
     });
   } catch (err) {
     return next(err);

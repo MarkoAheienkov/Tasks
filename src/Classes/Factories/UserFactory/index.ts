@@ -9,37 +9,11 @@ export default class UserFactory {
     userData: UserData,
   ): User | Admin {
     let user;
-    const {
-      id,
-      username,
-      isAdmin,
-      email,
-      password,
-      articles,
-      articlesToApprove,
-      posts,
-    } = userData;
+    const { id, username, isAdmin, email, password } = userData;
     if (isAdmin) {
-      user = new Admin(
-        username,
-        email,
-        password,
-        userDBConnector,
-        articles,
-        articlesToApprove,
-        posts,
-        id,
-      );
+      user = new Admin(username, email, password, userDBConnector, id);
     } else {
-      user = new User(
-        username,
-        email,
-        password,
-        userDBConnector,
-        articles,
-        posts,
-        id,
-      );
+      user = new User(username, email, password, userDBConnector, id);
     }
     return user;
   }

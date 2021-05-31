@@ -1,4 +1,3 @@
-import { v4 } from 'uuid';
 import PostDBConnector from '../Interfaces/DBConnectors/PostDBConnector';
 import Model from '../Interfaces/Model';
 import PostData from '../Interfaces/Data/Post';
@@ -19,7 +18,7 @@ class Post implements Model {
     this.title = title;
     this.body = body;
     this.postDBConnector = postDBConnector;
-    this.id = id || v4();
+    this.id = id || postDBConnector.generateId();
     this.creator = creator;
   }
 
@@ -62,6 +61,17 @@ class Post implements Model {
     } else {
       this.postDBConnector.addRecord(postData);
     }
+  }
+
+  static async getByTitle(
+    postDBConnector: PostDBConnector,
+    title: string,
+  ): Promise<Array<Post>> {
+    const postsData = await postDBConnector.getPostsByTitle(title);
+    const posts = postsData.map((postData: PostData) => {
+      return Post.toModel(postDBConnector, postData);
+    });
+    return posts;
   }
 
   async remove(): Promise<void> {

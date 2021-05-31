@@ -2,16 +2,28 @@ import { Router } from 'express';
 
 import * as postController from '../Controllers/posts';
 
+import middleWares from '../Middlewares';
+
 const router = Router();
 
 router.get('/', postController.getPosts);
 
 router.get('/:id', postController.getPostById);
 
-router.post('/', postController.postPost);
+router.post('/', middleWares.isUserAuthentification, postController.postPost);
 
-router.put('/:id', postController.putPost);
+router.put(
+  '/:id',
+  middleWares.isUserAuthentification,
+  middleWares.isPostCreator,
+  postController.putPost,
+);
 
-router.delete('/:id', postController.deletePost);
+router.delete(
+  '/:id',
+  middleWares.isUserAuthentification,
+  middleWares.isPostCreator,
+  postController.deletePost,
+);
 
 export default router;

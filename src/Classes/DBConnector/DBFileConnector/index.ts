@@ -1,3 +1,4 @@
+import { v4 } from 'uuid';
 import Data from '../../../Interfaces/Data';
 import DataBase from '../../../Interfaces/DataBase';
 import DBConnector from '../../../Interfaces/DBConnectors';
@@ -25,6 +26,9 @@ class FileDBConnector implements DBConnector {
       return record.id.toString() !== id.toString();
     });
     this.database.setRecords(records);
+  }
+  generateId(): string {
+    return v4();
   }
   async updateById(id: string, newRecordInfo: Data): Promise<void> {
     const records = this.database.records;
