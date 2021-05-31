@@ -1,6 +1,6 @@
 import { Router } from 'express';
 
-import * as postController from '../Controllers/posts';
+import * as postController from '../Controllers/post';
 
 import middleWares from '../Middlewares';
 

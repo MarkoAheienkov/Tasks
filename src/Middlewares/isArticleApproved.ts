@@ -1,9 +1,13 @@
 import { NextFunction, Request, Response } from 'express';
 import ArticleDBConnector from '../Classes/ArticleDBConnector/ArticleMongoDBConnector';
 import RequestError from '../Classes/Errors/RequestError';
-import Article from '../Models/Article';
+import { ERROR_MESSAGES, STATUS_CODES } from '../Constants';
+import constructLocationError from '../Helpers/constructLocationError';
+import isRequestError from '../Helpers/isRequestError';
+import ArticleRepository from '../Repositories/Article';
+import { LOCATIONS } from './constants';
 
-const isArticleExist = async (
+const isArticleApproved = async (
   req: Request,
   res: Response,
   next: NextFunction,
@@ -11,15 +15,29 @@ const isArticleExist = async (
   try {
     const articleDBConnector = new ArticleDBConnector();
     const { id } = req.params;
-    const article = (await Article.getById(articleDBConnector, id)) as Article;
+    const article = (await ArticleRepository.getById(
+      articleDBConnector,
+      id,
+    )) as ArticleRepository;
     if (article.approved) {
-      const error = new RequestError('Article is already approved', 409);
+      const error = new RequestError(
+        ERROR_MESSAGES.ARTICLE_ALREADY_APPROVED,
+        STATUS_CODES.ARTICLE_ALREADY_APPROVED,
+      );
       throw error;
     }
     next();
   } catch (err) {
-    next(err);
+    if (isRequestError(err)) {
+      next(err);
+    } else {
+      const locationError = constructLocationError(
+        err,
+        LOCATIONS.IS_ARTICLE_APPROVED,
+      );
+      next(locationError);
+    }
   }
 };
 
-export default isArticleExist;
+export default isArticleApproved;
