@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner, getManager } from 'typeorm';
+import { MigrationInterface, QueryRunner, getConnection } from 'typeorm';
 import { articleData, adminData, userData } from '../seedData';
 import Users from '../src/Entities/user';
 
@@ -6,8 +6,8 @@ import ArticleRepository from '../src/TypeORMRepositories/Articles';
 
 export class SeedingData1622117339344 implements MigrationInterface {
   public async up(): Promise<void> {
-    const manager = await getManager();
-    await manager.transaction(async manager => {
+    const connection = await getConnection('seed');
+    await connection.transaction(async manager => {
       const userRepository = manager.getRepository(Users);
       const articleRepository = manager.getCustomRepository(ArticleRepository);
       const admin = new Users();
@@ -27,6 +27,6 @@ export class SeedingData1622117339344 implements MigrationInterface {
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    console.log();
+    console.log('No revert');
   }
 }

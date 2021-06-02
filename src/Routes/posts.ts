@@ -1,6 +1,5 @@
 import { Router } from 'express';
 
-// import * as postController from '../Controllers/post';
 import * as postController from '../TypeORMControllers/post';
 
 import middleWares from '../TypeORMMiddlewares';

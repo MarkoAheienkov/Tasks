@@ -14,6 +14,12 @@ class Posts {
 
   @Column() title?: string;
 
+  @Column({
+    type: 'time without time zone',
+    default: 'now()',
+  })
+  created_at?: Date;
+
   @Column('text') body?: string;
 
   @ManyToOne(

@@ -13,6 +13,18 @@ class Users {
 
   @Column() email?: string;
 
+  @Column({
+    nullable: true,
+    type: 'time without time zone',
+  })
+  date_of_birth?: Date;
+
+  @Column({
+    default: 'now()',
+    type: 'time without time zone',
+  })
+  created_at?: Date;
+
   @Column() password?: string;
 
   @OneToMany(

@@ -59,16 +59,21 @@ export const postReply = async (
     if (user) {
       comment.creator = user;
     }
-    connection.transaction(async manager => {
+    const reply = new Replies();
+    reply.comment_id = Number(commentId);
+    reply.reply_id = comment;
+    await connection.transaction(async manager => {
       const commentRepository = manager.getRepository(Comments);
       const replyRepository = manager.getRepository(Replies);
       await commentRepository.save(comment);
-      const reply = new Replies();
-      reply.comment_id = Number(commentId);
-      reply.reply_id = comment;
       await replyRepository.save(reply);
     });
-    return res.json({ status: SUCCESS_MESSAGES.SUCCESS });
+    console.log(comment.comment_id, reply);
+    return res.json({
+      status: SUCCESS_MESSAGES.SUCCESS,
+      reply,
+      id: comment.comment_id,
+    });
   } catch (err) {
     const locationError = constructLocationError(err, LOCATIONS.POST_REPLY);
     next(locationError);

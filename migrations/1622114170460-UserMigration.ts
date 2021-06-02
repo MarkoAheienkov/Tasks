@@ -6,7 +6,7 @@ import {
 } from 'typeorm';
 
 export class TestMigration1622114170460 implements MigrationInterface {
-  public async up(queryRunner: QueryRunner): Promise<void> {
+  public async up(queryRunnerGlobal: QueryRunner): Promise<void> {
     const birthColumn = new TableColumn({
       name: 'date_of_birth',
       type: 'date',
@@ -23,9 +23,9 @@ export class TestMigration1622114170460 implements MigrationInterface {
       type: 'timestamp without time zone',
       default: 'now()',
     });
-    const connection = await getConnection();
+    const connection = await getConnection('default');
     await connection.transaction(async manager => {
-      const queryRunner = manager.queryRunner;
+      const queryRunner = manager.queryRunner || queryRunnerGlobal;
       const usersTable = await queryRunner.getTable('users');
       const postsTable = await queryRunner.getTable('posts');
       if (usersTable) {
@@ -40,11 +40,11 @@ export class TestMigration1622114170460 implements MigrationInterface {
     });
   }
 
-  public async down(queryRunner: QueryRunner): Promise<void> {
+  public async down(queryRunnerGlobal: QueryRunner): Promise<void> {
     const connection = await getConnection();
     connection.transaction(async manager => {
-      const queryRunner = manager.queryRunner;
-      await queryRunner.dropColumn('users', 'data_of_birth');
+      const queryRunner = manager.queryRunner || queryRunnerGlobal;
+      await queryRunner.dropColumn('users', 'date_of_birth');
       await queryRunner.dropColumn('users', 'created_at');
       await queryRunner.dropColumn('posts', 'created_at');
     });
