@@ -1,13 +1,18 @@
+import 'reflect-metadata';
+
 import express from 'express';
 import cors from 'cors';
+import cookieParser from 'cookie-parser';
 
 import articleRoutes from './Routes/articles';
 import postRoutes from './Routes/posts';
 import commentRoutes from './Routes/comments';
+import authRoutes from './Routes/auth';
 
 import errorHandler from './ErrorHandler/errorHandler';
-import sqlConnector from './Connect/sqlDBConnector';
 import serverErrorLogger from './Logger/ServerErrorLogger';
+import typeORMConnector from './Connect/typeORMConnect';
+import createErrorMessage from './Helpers/createErrorMessage';
 
 const app = express();
 
@@ -23,18 +28,20 @@ app.use('/posts', postRoutes);
 
 app.use('/comments', commentRoutes);
 
+app.use('/auth', authRoutes);
+
 app.use(errorHandler);
 
 const startServer = async (): Promise<void> => {
   try {
-    await sqlConnector.getConnect();
+    await typeORMConnector.getConnect();
     app.listen(PORT, () => {
       console.log('Server is running on PORT:', PORT);
     });
   } catch (err) {
     serverErrorLogger.log({
       level: 'error',
-      message: err,
+      message: createErrorMessage(err),
     });
   }
 };

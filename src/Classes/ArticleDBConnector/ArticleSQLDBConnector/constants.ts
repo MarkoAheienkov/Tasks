@@ -9,4 +9,6 @@ export const LOCATIONS = {
   ADD_RECORD: '[ArticleSQLDBConnector, addRecord]',
   UPDATE_BY_ID: '[ArticleSQLDBConnector, updateById]',
   REMOVE_BY_ID: '[ArticleSQLDBConnector, removeById]',
+  CREATE_INDEX: '[ArticleSQLDBConnector, createIndex]',
+  INIT: '[ArticleSQLDBConnector, init]',
 };

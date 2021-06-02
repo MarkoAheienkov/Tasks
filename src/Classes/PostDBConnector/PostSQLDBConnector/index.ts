@@ -8,19 +8,18 @@ import { LOCATIONS } from './constants';
 class PostSQLDBConnector extends SQLDBConnector implements PostDBConnector {
   constructor() {
     super();
-    this.createTables();
   }
 
   private createTablePosts(): any {
     return {
-      text: `CREATE TABLE IF NOT EXISTS POSTS(
+      text: `CREATE TABLE IF NOT EXISTS juggling.POSTS(
         post_id serial PRIMARY KEY,
         title varchar(255),
         body text,
         creator integer,
         CONSTRAINT fk_creator
           FOREIGN KEY(creator) 
-          REFERENCES users(user_id)
+          REFERENCES juggling.users(user_id)
       );`,
     };
   }
@@ -42,10 +41,26 @@ class PostSQLDBConnector extends SQLDBConnector implements PostDBConnector {
     }
   }
 
+  async init(): Promise<void> {
+    try {
+      await this.createTables();
+    } catch (err) {
+      const locationError = constructLocationError(err, LOCATIONS.INIT);
+      throw locationError;
+    }
+  }
+
+  private gelAllQuery(): any {
+    return {
+      text: `SELECT * FROM juggling.posts`,
+      values: [],
+    };
+  }
+
   async getAll(): Promise<Array<PostData>> {
     try {
       const connector = await sqlConnector.getConnect();
-      const res = await connector.query(`SELECT * FROM posts`);
+      const res = await connector.query(this.gelAllQuery());
       return this.rowsToPostsData(res.rows);
     } catch (err) {
       const locationError = constructLocationError(err, LOCATIONS.GET_ALL);
@@ -55,14 +70,13 @@ class PostSQLDBConnector extends SQLDBConnector implements PostDBConnector {
 
   private getByIdQuery(id: string): any {
     return {
-      text: `SELECT * FROM posts where post_id=$1`,
+      text: `SELECT * FROM juggling.posts where post_id=$1`,
       values: [id],
     };
   }
 
   async getById(id: string): Promise<PostData> {
     try {
-      console.log(LOCATIONS.GET_BY_ID);
       const connector = await sqlConnector.getConnect();
       const res = await connector.query(this.getByIdQuery(id));
       return res.rows[0];
@@ -74,7 +88,7 @@ class PostSQLDBConnector extends SQLDBConnector implements PostDBConnector {
 
   private addRecordQuery(record: PostData): any {
     return {
-      text: `INSERT INTO POSTS(title, body, creator)
+      text: `INSERT INTO juggling.POSTS(title, body, creator)
         VALUES ($1, $2, $3)`,
       values: [record.title, record.body, record.creator],
     };
@@ -92,7 +106,7 @@ class PostSQLDBConnector extends SQLDBConnector implements PostDBConnector {
 
   private getPostsByTitleQuery(title: string): any {
     return {
-      text: `SELECT * FROM posts WHERE title ILIKE %$1%`,
+      text: `SELECT * FROM juggling.posts WHERE juggling.posts.title ILIKE %$1%`,
       values: [title],
     };
   }
@@ -113,7 +127,7 @@ class PostSQLDBConnector extends SQLDBConnector implements PostDBConnector {
 
   private updateByIdQuery(id: string, newRecord: PostData): any {
     return {
-      text: `UPDATE POSTS
+      text: `UPDATE juggling.POSTS
       SET
         title=$1,
         body=$2,
@@ -135,7 +149,7 @@ class PostSQLDBConnector extends SQLDBConnector implements PostDBConnector {
 
   private removeByIdQuery(id: string): any {
     return {
-      text: `DELETE FROM POSTS WHERE post_id=$1`,
+      text: `DELETE FROM juggling.POSTS WHERE post_id=$1`,
       values: [id],
     };
   }

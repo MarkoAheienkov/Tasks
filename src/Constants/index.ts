@@ -17,3 +17,7 @@ export const ERRORS = {
   SERVER_ERROR: 'Server Error',
   REQUEST_ERROR: 'Request Error',
 };
+
+export const SUCCESS_MESSAGES = {
+  SUCCESS: 'success',
+};

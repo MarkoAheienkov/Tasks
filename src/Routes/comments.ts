@@ -1,8 +1,8 @@
 import { Router } from 'express';
 
-import * as commentController from '../Controllers/comment';
+import * as commentController from '../TypeORMControllers/comment';
 
-import middleWares from '../Middlewares';
+import middleWares from '../TypeORMMiddlewares';
 
 const router = Router();
 
@@ -19,6 +19,7 @@ router.post(
 router.post(
   '/:postId',
   middleWares.isUserAuthentification,
+  middleWares.isPostExist,
   commentController.postComment,
 );
 

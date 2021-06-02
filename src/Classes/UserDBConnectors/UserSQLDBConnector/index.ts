@@ -8,12 +8,11 @@ import { LOCATIONS } from './constants';
 class UserSQLDBConnector extends SQLDBConnector implements UserDBConnector {
   constructor() {
     super();
-    this.createTables();
   }
 
   private createTableUsers(): any {
     return {
-      text: `CREATE TABLE IF NOT EXISTS USERS(
+      text: `CREATE TABLE IF NOT EXISTS juggling.USERS(
         user_id serial PRIMARY KEY,
         username varchar(255),
         email varchar(255),
@@ -40,10 +39,26 @@ class UserSQLDBConnector extends SQLDBConnector implements UserDBConnector {
     }
   }
 
+  async init(): Promise<void> {
+    try {
+      await this.createTables();
+    } catch (err) {
+      const locationError = constructLocationError(err, LOCATIONS.INIT);
+      throw locationError;
+    }
+  }
+
+  private getAllQuery(): any {
+    return {
+      text: `SELECT * FROM juggling.USERS;`,
+      values: [],
+    };
+  }
+
   async getAll(): Promise<Array<UserData>> {
     try {
       const connector = await sqlConnector.getConnect();
-      const res = await connector.query(`SELECT * FROM USERS;`);
+      const res = await connector.query(this.getAllQuery());
       return res.rows;
     } catch (err) {
       const locationError = constructLocationError(err, LOCATIONS.GET_ALL);
@@ -53,7 +68,7 @@ class UserSQLDBConnector extends SQLDBConnector implements UserDBConnector {
 
   private getByIdQuery(id: string): any {
     return {
-      text: `SELECT * FROM USERS WHERE user_id=$1`,
+      text: `SELECT * FROM juggling.USERS WHERE user_id=$1`,
       values: [id],
     };
   }
@@ -71,7 +86,7 @@ class UserSQLDBConnector extends SQLDBConnector implements UserDBConnector {
 
   private addRecordQuery(record: UserData): any {
     return {
-      text: `INSERT INTO USERS(username, email, password, isAdmin)
+      text: `INSERT INTO juggling.USERS(username, email, password, isAdmin)
       VALUES ($1, $2, $3, $4)`,
       values: [record.username, record.email, record.password, record.isAdmin],
     };
@@ -89,7 +104,7 @@ class UserSQLDBConnector extends SQLDBConnector implements UserDBConnector {
 
   private removeByIdQuery(id: string): any {
     return {
-      text: `DELETE FROM USERS WHERE user_id=$1`,
+      text: `DELETE FROM juggling.USERS WHERE user_id=$1`,
       values: [id],
     };
   }
@@ -106,7 +121,7 @@ class UserSQLDBConnector extends SQLDBConnector implements UserDBConnector {
 
   private updateByIdQuery(id: string, newRecord: UserData): any {
     return {
-      text: `UPDATE users
+      text: `UPDATE juggling.users
       SET
         username=$1,
         email=$2,
@@ -136,7 +151,7 @@ class UserSQLDBConnector extends SQLDBConnector implements UserDBConnector {
 
   private getAllAdminsQuery(): any {
     return {
-      text: `SELECT * FROM USERS WHERE isAdmin=true`,
+      text: `SELECT * FROM juggling.USERS WHERE isAdmin=true`,
     };
   }
 
@@ -156,7 +171,7 @@ class UserSQLDBConnector extends SQLDBConnector implements UserDBConnector {
 
   private getUserByEmailQuery(email: string): any {
     return {
-      text: `SELECT * FROM USERS WHERE email=$1`,
+      text: `SELECT * FROM juggling.USERS WHERE email=$1`,
       values: [email],
     };
   }
