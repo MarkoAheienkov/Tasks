@@ -16,7 +16,8 @@
     "prettier/prettier": 2,
     "no-undef": "off",
     "@typescript-eslint/no-explicit-any": "off",
-    "@typescript-eslint/camelcase": "off"
+    "@typescript-eslint/camelcase": "off",
+    "@typescript-eslint/no-var-requires": "off"
   },
   "env": {
     "browser": true,

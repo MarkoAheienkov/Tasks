@@ -5,6 +5,9 @@ import isArticleExist from './isArticleExist';
 import isPostCreator from './isPostCreator';
 import isPostExist from './isPostExist';
 import isUserAuthentification from './isUserAuthentification';
+import hasValidationError from './hasValidationError';
+import isValidArticleId from './isValidId';
+import isAuth from './isAuth';
 
 export default {
   isAdminAuthentification,
@@ -14,4 +17,7 @@ export default {
   isPostCreator,
   isPostExist,
   isUserAuthentification,
+  hasValidationError,
+  isAuth,
+  isValidArticleId,
 };

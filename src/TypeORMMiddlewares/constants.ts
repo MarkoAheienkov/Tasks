@@ -6,4 +6,7 @@ export const LOCATIONS = {
   IS_POST_CREATOR: '[Middlewares, isPostCreator]',
   IS_POST_EXIST: '[Middlewares, isPostExist]',
   IS_USER_AUTHENFICATION: '[Middlewares, isUserAuthentification]',
+  HAS_VALIDATIONS_ERROR: '[Middlewares, hasValidationError]',
+  HAS_ID: '[Middlewares, hasId]',
+  IS_VALID_ID: '[Middlewares, isValidId]',
 };

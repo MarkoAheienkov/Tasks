@@ -3,6 +3,7 @@ import Users from '../src/Entities/user';
 import Articles from '../src/Entities/article';
 import ArticleRepository from '../src/TypeORMRepositories/Articles';
 import typeORMConnector from '../src/Connect/typeORMConnect';
+import bcrypt from 'bcryptjs';
 
 const getUserByEmail = async (email: string): Promise<Users | void> => {
   const connection = await typeORMConnector.getConnect();
@@ -55,8 +56,10 @@ const seedData = async (): Promise<void> => {
       const user = new Users();
       user.email = userData.email;
       admin.email = adminData.email;
-      user.password = userData.password;
-      admin.password = adminData.password;
+      const userHashedPassword = await bcrypt.hash(userData.password, 12);
+      const adminHashedPassword = await bcrypt.hash(adminData.password, 12);
+      user.password = userHashedPassword;
+      admin.password = adminHashedPassword;
       user.is_admin = userData.is_admin;
       admin.is_admin = adminData.is_admin;
       user.username = userData.username;

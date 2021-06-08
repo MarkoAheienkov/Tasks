@@ -10,18 +10,18 @@ router.get('/', postController.getPosts);
 
 router.get('/:id', postController.getPostById);
 
-router.post('/', middleWares.isUserAuthentification, postController.postPost);
+router.post('/', middleWares.isAuth, postController.postPost);
 
 router.put(
   '/:id',
-  middleWares.isUserAuthentification,
+  middleWares.isAuth,
   middleWares.isPostCreator,
   postController.putPost,
 );
 
 router.delete(
   '/:id',
-  middleWares.isUserAuthentification,
+  middleWares.isAuth,
   middleWares.isPostCreator,
   postController.deletePost,
 );

@@ -12,10 +12,12 @@ import { LOCATIONS } from './constants';
 
 export class TypeORMConnector {
   isConnected: boolean;
+  schema: string;
   connection?: Connection;
-  constructor() {
+  constructor(schema: string) {
     this.isConnected = false;
     this.reconnect = this.reconnect.bind(this);
+    this.schema = schema;
   }
 
   async getConnect(): Promise<Connection> {
@@ -34,15 +36,15 @@ export class TypeORMConnector {
   async reconnect(): Promise<Connection> {
     try {
       this.connection = await createConnection({
-        host: 'localhost',
-        port: 5432,
-        database: 'forum',
-        password: 'verysecretepassword',
-        username: 'super_user',
+        host: process.env.DB_HOST,
+        port: Number(process.env.DB_PORT),
+        database: process.env.DB_DB_NAME,
+        password: process.env.DB_PASSWORD,
+        username: process.env.DB_USER,
         synchronize: true,
         type: 'postgres',
         entities: [Users, Posts, Comments, Articles, Sections, Images, Replies],
-        schema: 'juggling',
+        schema: this.schema,
       });
       this.isConnected = true;
       return this.connection;
@@ -53,6 +55,6 @@ export class TypeORMConnector {
   }
 }
 
-const typeORMConnector = new TypeORMConnector();
+const typeORMConnector = new TypeORMConnector(process.env.DB_SCHEMA as string);
 
 export default typeORMConnector;

@@ -16,7 +16,7 @@ const isArticleExist = async (
     const { id } = req.params;
     const connection = await typeORMConnect.getConnect();
     const articleRepository = connection.getRepository(Articles);
-    const article = await articleRepository.find({
+    const article = await articleRepository.findOne({
       where: [{ article_id: id }],
     });
     if (!article) {

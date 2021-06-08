@@ -4,6 +4,8 @@ export const ERROR_MESSAGES = {
   NO_SUCH_POST: 'No such post',
   ARTICLE_ALREADY_APPROVED: 'Article is aprroved',
   SERVER_ERROR: 'Server error',
+  ID_SI_NOT_VALID: 'Is is not valid',
+  ID_IS_REQUIRED: 'Id is required',
 };
 
 export const STATUS_CODES = {
@@ -11,6 +13,9 @@ export const STATUS_CODES = {
   NOT_FOUND: 404,
   ARTICLE_ALREADY_APPROVED: 409,
   SERVER_ERROR: 500,
+  VALIDATION_ERROR: 400,
+  SUCCESS: 200,
+  CREATED: 201,
 };
 
 export const ERRORS = {
@@ -20,4 +25,9 @@ export const ERRORS = {
 
 export const SUCCESS_MESSAGES = {
   SUCCESS: 'success',
+};
+
+export const MODES = {
+  DEVELOPMENT: 'development',
+  TEST: 'test',
 };

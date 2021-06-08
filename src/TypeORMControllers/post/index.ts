@@ -1,10 +1,10 @@
 import { NextFunction, Request, Response } from 'express';
 import constructLocationError from '../../Helpers/constructLocationError';
-import getUser from '../../Helpers/getUserFromQueryWithTypeORM';
 import typeORMConnect from '../../Connect/typeORMConnect';
 import Post from '../../Entities/post';
 import { LOCATIONS } from './constants';
 import { SUCCESS_MESSAGES } from '../../Constants';
+import Users from '../../Entities/user';
 
 export const getPosts = async (
   req: Request,
@@ -92,10 +92,9 @@ export const postPost = async (
   next: NextFunction,
 ): Promise<Response | void> => {
   try {
-    const { auth } = req.query;
     const connection = await typeORMConnect.getConnect();
     const postRepository = connection.getRepository(Post);
-    const user = await getUser(auth as string);
+    const user = req.user as Users;
     const { title, body } = req.body;
     const post = new Post();
     post.title = title;
