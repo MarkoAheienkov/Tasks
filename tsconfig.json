@@ -17,7 +17,7 @@
   },
   "include": [
     "src/**/*" 
-  ],
+, "__mocks__"  ],
   "exclude" : [
     "src/**/*.spec.ts"
   ]

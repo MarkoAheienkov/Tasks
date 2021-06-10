@@ -54,9 +54,9 @@ class ArticleRepository extends Repository<Articles> {
           section.title = title;
           await sectionRepository.save(section);
           const promises: Array<Promise<any>> = images.map((imageData: any) => {
-            const { value } = imageData;
+            const { value, image_url } = imageData;
             const image = new Images();
-            image.image_url = value;
+            image.image_url = value || image_url;
             image.section_id = section.section_id;
             return imageRepository.save(image);
           });

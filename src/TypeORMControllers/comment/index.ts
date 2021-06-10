@@ -1,12 +1,12 @@
 import { NextFunction, Request, Response } from 'express';
 import constructLocationError from '../../Helpers/constructLocationError';
-import getUser from '../../Helpers/getUserFromQueryWithTypeORM';
 import typeORMConnect from '../../Connect/typeORMConnect';
 import { LOCATIONS } from './constants';
 import Comments from '../../Entities/comment';
 import { SUCCESS_MESSAGES } from '../../Constants';
 import Replies from '../../Entities/reply';
 import Posts from '../../Entities/post';
+import Users from '../../Entities/user';
 
 export const postComment = async (
   req: Request,
@@ -16,12 +16,11 @@ export const postComment = async (
   try {
     const { text } = req.body;
     const { postId } = req.params;
-    const { auth } = req.query;
     const connection = await typeORMConnect.getConnect();
     const commentRepository = await connection.getRepository(Comments);
     const postConnector = await connection.getRepository(Posts);
     const post = await postConnector.findOne({ where: [{ post_id: postId }] });
-    const user = await getUser(auth as string);
+    const user = req.user as Users;
     const comment = new Comments();
     comment.text = text;
     comment.post_id = post;
@@ -43,11 +42,10 @@ export const postReply = async (
   next: NextFunction,
 ): Promise<Response | void> => {
   try {
-    const { auth } = req.query;
     const { text, postId } = req.body;
     const { commentId } = req.params;
     const connection = await typeORMConnect.getConnect();
-    const user = await getUser(auth as string);
+    const user = req.user as Users;
     const postRepository = connection.getRepository(Posts);
     const post = await postRepository.findOne({
       where: [{ post_id: postId }],

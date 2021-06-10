@@ -2,11 +2,11 @@ import { NextFunction, Request, Response } from 'express';
 import RequestError from '../Classes/Errors/RequestError';
 import { ERROR_MESSAGES, STATUS_CODES } from '../Constants';
 import constructLocationError from '../Helpers/constructLocationError';
-import getUser from '../Helpers/getUserFromQueryWithTypeORM';
 import isRequestError from '../Helpers/isRequestError';
 import { LOCATIONS } from './constants';
 import typeORMConnect from '../Connect/typeORMConnect';
-import Articles from '../Entities/article';
+import Users from '../Entities/user';
+import Posts from '../Entities/post';
 
 const isPostCreator = async (
   req: Request,
@@ -15,14 +15,13 @@ const isPostCreator = async (
 ): Promise<void> => {
   try {
     const { id } = req.params;
-    const { auth } = req.query;
     const connection = await typeORMConnect.getConnect();
-    const user = await getUser(auth as string);
-    const articleRepository = connection.getRepository(Articles);
-    const article = await articleRepository.findOne({
-      where: [{ article_id: id }],
+    const user = req.user as Users;
+    const postRepository = connection.getRepository(Posts);
+    const post = await postRepository.findOne({
+      where: [{ post_id: id, creator: user }],
     });
-    if (!article || !user || article.creator !== user.user_id) {
+    if (!post && !user.is_admin) {
       const error = new RequestError(
         ERROR_MESSAGES.AUTHORIZATION_PROBLEM,
         STATUS_CODES.AUTHORIZATION_PROBLEM,

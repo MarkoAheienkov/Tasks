@@ -1,11 +1,11 @@
 import { Response, NextFunction, Request } from 'express';
 import constructLocationError from '../../Helpers/constructLocationError';
-import getUser from '../../Helpers/getUserFromQueryWithTypeORM';
 import typeORMConnect from '../../Connect/typeORMConnect';
 import { LOCATIONS } from './constants';
 import Articles from '../../Entities/article';
 import { SUCCESS_MESSAGES } from '../../Constants';
 import ArticleRepository from '../../TypeORMRepositories/Articles';
+import Users from '../../Entities/user';
 
 export const getArticles = async (
   req: Request,
@@ -72,8 +72,7 @@ export const getArticlesUser = async (
   next: NextFunction,
 ): Promise<Response | void> => {
   try {
-    const { auth } = req.query;
-    const user = await getUser(auth as string);
+    const user = req.user as Users;
     const connect = await typeORMConnect.getConnect();
     let articles;
     const articlesRepository = connect.getRepository(Articles);
@@ -99,8 +98,7 @@ export const postArticle = async (
 ): Promise<Response | void> => {
   try {
     const articleData = req.body;
-    const { auth } = req.query;
-    const user = await getUser(auth as string);
+    const user = req.user as Users;
     const connection = await typeORMConnect.getConnect();
     await connection.transaction(async manager => {
       const articleRepository = manager.getCustomRepository(ArticleRepository);
@@ -122,9 +120,8 @@ export const putArticle = async (
 ): Promise<Response | void> => {
   try {
     const articleData = req.body;
-    const { auth } = req.query;
     const { id } = req.params;
-    const user = await getUser(auth as string);
+    const user = req.user as Users;
     const connection = await typeORMConnect.getConnect();
     await connection.transaction(async manager => {
       const articleRepository = manager.getCustomRepository(ArticleRepository);

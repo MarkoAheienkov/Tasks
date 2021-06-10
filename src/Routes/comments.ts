@@ -12,13 +12,13 @@ router.get('/:postId', commentController.getComments);
 
 router.post(
   '/replies/:commentId',
-  middleWares.isUserAuthentification,
+  middleWares.isAuth,
   commentController.postReply,
 );
 
 router.post(
   '/:postId',
-  middleWares.isUserAuthentification,
+  middleWares.isAuth,
   middleWares.isPostExist,
   commentController.postComment,
 );

@@ -16,7 +16,7 @@ const isPostExist = async (
     const { id } = req.params;
     const connection = await typeORMConnect.getConnect();
     const postRepository = connection.getRepository(Posts);
-    const post = postRepository.findOne({ where: [{ post_id: id }] });
+    const post = await postRepository.findOne({ where: [{ post_id: id }] });
     if (!post) {
       const error = new RequestError(
         ERROR_MESSAGES.NO_SUCH_POST,
