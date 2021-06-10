@@ -1,0 +1,8 @@
+.App {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  background: linear-gradient(125deg,rgba(39,107,130,1) 0,rgba(49,84,129,1) 100%);
+  height: 100vh;
+}

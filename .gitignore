@@ -1,3 +1,4 @@
-/Server/node_modules
-/Server/Models
-/Server/Controllers
+/server/node_modules
+/server/Controllers
+/server/Models
+/node_modules

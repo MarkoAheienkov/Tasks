@@ -1,0 +1,13 @@
+.messages {
+  padding: 50px 20px;
+  width: 100%;
+  max-width: 1000px;
+  list-style: none;
+  max-height: 95%;
+  overflow-y: auto;
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+.messages::-webkit-scrollbar {
+  display: none;
+}
