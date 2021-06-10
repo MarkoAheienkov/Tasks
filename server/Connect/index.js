@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const constructLocationError = require('../../Helpers/constructLocationError');
+const constructLocationError = require('../Helpers/constructLocationError');
 const { LOCATIONS } = require('./constants');
 
 class MongoConnector {
@@ -26,7 +26,7 @@ class MongoConnector {
 
   async reconnect() {
     try {
-      this.client = await mongoose.connect(this.url, {useNewUrlParser: true});
+      this.client = await mongoose.connect(this.url, {useNewUrlParser: true, useUnifiedTopology: true});
     } catch (err) {
       const locationError = constructLocationError(err, LOCATIONS.RECONNECT);
       throw locationError;

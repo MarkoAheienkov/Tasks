@@ -11,4 +11,4 @@ const constructLocationError = (err, location) => {
   return locationError;
 };
 
-module.exports.constructLocationError = constructLocationError;
+module.exports = constructLocationError;

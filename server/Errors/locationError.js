@@ -1,4 +1,4 @@
-import { ERRORS } from '../Constants';
+const { ERRORS } = require('../Constants');
 
 class LocationError extends Error {
   constructor(err, location) {
@@ -10,4 +10,4 @@ class LocationError extends Error {
   }
 }
 
-export default LocationError;
+module.exports = LocationError;

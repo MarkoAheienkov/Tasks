@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import MessageForm from "../../Compoents/Chat/MessageForm";
 import Messages from "../../Compoents/Chat/Messages";
+import io from 'socket.io-client';
 import './chat.css';
 
 const Chat = () => {
@@ -27,8 +28,24 @@ const Chat = () => {
       text: 'Have you finished your task?',
     }
   ]);
+
+  const [socket, setSocket] = useState(null);
+
+  useEffect(() => {
+    const newSocket = io('http://localhost:4000');
+    setSocket(newSocket);
+  }, []);
+
   const submit = (event) => {
     event.preventDefault();
+    if (socket) {
+      const message = {
+        text: event.target.value,
+        createdAt: new Date(),
+        author: 'murko',
+      };
+      socket.emit('message', message);
+    }
   };
   return <section className='container'>
     <Messages messages={messages}/>
