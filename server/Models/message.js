@@ -1,20 +1,6 @@
 const { model, Schema } = require('mongoose');
 
 const messageSchema = new Schema({
-  roomId: {
-    type: Schema.Types.String,
-    require: true,
-  },
-  to: {
-    type: Schema.Types.ObjectId,
-    ref: 'users',
-    require: true,
-  },
-  from: {
-    type: Schema.Types.ObjectId,
-    ref: 'users',
-    require: true,
-  },
   createdAt: {
     type: Schema.Types.Date,
     default: Date.now,
@@ -23,6 +9,10 @@ const messageSchema = new Schema({
     type: Schema.Types.String,
     require: true,
   },
+  author: {
+    type: Schema.Types.String,
+    required: true,
+  }
 });
 
 

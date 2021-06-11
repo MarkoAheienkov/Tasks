@@ -1,15 +1,16 @@
 import Message from "../Message";
 import './Messages.css'
 
-const Messages = ({messages = []}) => {
-  return <ul className='messages'>
-    {messages.map(({text, _id, author, isSender, date}) => {
+const Messages = ({messages = [], username, ulRef}) => {
+
+  return <ul ref={ulRef} className='messages'>
+    {messages.map(({text, _id, author, createdAt}) => {
       return <Message
               key={_id}
               text={text}
-              isSender={isSender}
+              isSender={author === username}
               author={author}
-              date={date}/>;
+              createdAt={createdAt}/>;
     })}
   </ul>;
 };

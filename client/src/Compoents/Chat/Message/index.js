@@ -1,18 +1,19 @@
+import dateToTime from '../../../Helpers/dateToTime';
 import './Message.css';
 
-const Message = ({isSender, author, text, date}) => {
-  const messageContainerClasses = ['message-container'];
+const Message = ({isSender, author, text, createdAt}) => {
+  const messageContainerclassNamees = ['message-container'];
   if (isSender) {
-    messageContainerClasses.push('message-user');
+    messageContainerclassNamees.push('message-user');
   } else {
-    messageContainerClasses.push('message-speaker');
+    messageContainerclassNamees.push('message-speaker');
   }
   return (
-    <li class={messageContainerClasses.join(' ')}>
-      <div class="message">
-        <small class="message__author">{author}</small>
-        <p class="message__text">{text}</p>
-        <small class="message__time">{date}</small>
+    <li className={messageContainerclassNamees.join(' ')}>
+      <div className="message">
+        <small className="message__author">{author}</small>
+        <p className="message__text">{text}</p>
+        <small className="message__time">{dateToTime(createdAt)}</small>
       </div>
     </li>);
 };

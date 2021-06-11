@@ -5,6 +5,11 @@ const userSchema = new Schema({
     type: Schema.Types.String,
     require: true,
   },
+  isOnline: {
+    type: Schema.Types.Boolean,
+    require: true,
+    default: false,
+  },
 });
 
 
