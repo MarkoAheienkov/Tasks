@@ -25,3 +25,23 @@ module.exports.MODES = {
   DEVELOPMENT: 'development',
   TEST: 'test',
 };
+
+module.exports.SOCKET_USER_EVENTS = {
+  LOGIN: 'user:login',
+  LOGOUT: 'user:logout',
+};
+
+module.exports.SOCKET_MESSAGE_EVENTS = {
+  GET_MESSAGE: 'message:get',
+  ADD_MESSAGE: 'message:add',
+};
+
+module.exports.SOCKET_CONNECTION_EVENTS = {
+  CONNECT: 'connection',
+  DISCONNECT: 'disconnect',
+  NOT_ALLOWED: 'not allowed',
+};
+
+module.exports.CONSTANTS = {
+  MAX_ROOM_PARTICIPANTS: 2,
+};

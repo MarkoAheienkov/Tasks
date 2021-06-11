@@ -1,55 +1,53 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import MessageForm from "../../Compoents/Chat/MessageForm";
 import Messages from "../../Compoents/Chat/Messages";
-import io from 'socket.io-client';
 import './chat.css';
+import { useSelector } from "react-redux";
+import useCustomChat from "../../Hooks/useCustomChat";
+import { useHistory } from "react-router";
 
 const Chat = () => {
-  const [messages, setMessages] = useState([
-    {
-      _id: 1,
-      author: 'marko',
-      isSender: true,
-      date: '13:10',
-      text: 'Hi!',
-    },
-    {
-      _id: 2,
-      author: 'no marko',
-      isSender: false,
-      date: '13:15',
-      text: 'Hi! How are you?',
-    },
-    {
-      _id: 3,
-      author: 'no marko',
-      isSender: false,
-      date: '14:10',
-      text: 'Have you finished your task?',
-    }
-  ]);
 
-  const [socket, setSocket] = useState(null);
+  const history = useHistory();
+
+  const notAllowed = () => {
+    alert('You cant join this room, because room is full. Please, try again later.');
+    history.push('/');
+  };
+
+  const { sendMessage, getMessages } = useCustomChat('first', notAllowed);
+  const username = useSelector(state => state.username);
+  const messages = useSelector(state => state.messages);
+  const ulRef = useRef(null); 
+
+  const [messageText, setMessageText] = useState('');
+
+  const scroll = () => {
+    ulRef.current.scroll({
+      top: messages.length*200,
+    });
+  };
+  
+  useEffect(() => {
+    getMessages();
+  }, []);
 
   useEffect(() => {
-    const newSocket = io('http://localhost:4000');
-    setSocket(newSocket);
-  }, []);
+    scroll();
+  });
 
   const submit = (event) => {
     event.preventDefault();
-    if (socket) {
-      const message = {
-        text: event.target.value,
-        createdAt: new Date(),
-        author: 'murko',
-      };
-      socket.emit('message', message);
-    }
+    sendMessage({
+      messageText: messageText,
+    })
+    setMessageText('');
+    scroll()
   };
+
   return <section className='container'>
-    <Messages messages={messages}/>
-    <MessageForm submit={submit}/>
+    <Messages username={username} messages={messages} ulRef={ulRef}/>
+    <MessageForm value={messageText} setMessageText={setMessageText} submit={submit}/>
   </section>;
 };
 
