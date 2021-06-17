@@ -5,7 +5,6 @@ const Searching = ({ search, delay = 500, placeholder }) => {
   const onInput = (event) => {
     clearTimeout(timerId);
     timerId = setTimeout(() => {
-      console.log(timerId);
       search(event.target.value);
     }, delay);
   };

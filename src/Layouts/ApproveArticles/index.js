@@ -1,7 +1,6 @@
 import axios from "../../Axios";
 import { useEffect, useState } from "react";
 import Articles from "../../Components/ApproveArticles/Articles";
-import { useSelector } from "react-redux";
 import classes from "./ApproveArticles.module.css";
 import { useHistory } from "react-router";
 
@@ -11,15 +10,16 @@ const ApproveArticles = () => {
 
   const history = useHistory();
 
-  const token = useSelector((state) => state.token);
-
   const getArticles = async () => {
-    setIsLoading(true);
-    const res = await axios.get(`/articles/not-approved?auth=${token}`);
-    const articles = res.data.articles;
-    console.log(articles);
-    setArticles(articles);
-    setIsLoading(false);
+    try {
+      setIsLoading(true);
+      const res = await axios.get(`/articles/not-approved`);
+      const articles = res.data.articles;
+      setArticles(articles);
+      setIsLoading(false);
+    } catch (err) {
+      console.log('[ApproveArticles, getArticles]', err);
+    }
   };
 
   useEffect(() => {
@@ -27,18 +27,30 @@ const ApproveArticles = () => {
   }, []);
 
   const removeArticle = async (id) => {
-    await axios.delete(`/articles/${id}?auth=${token}`);
-    getArticles();
+    try {
+      await axios.delete(`/articles/${id}`);
+      getArticles();
+    } catch (err) {
+      console.log('[ApproveArticles, removeArticle]', err);
+    }
   };
 
   const approveArticle = async (id) => {
-    await axios.patch(`/articles/approve/${id}?auth=${token}`);
-    getArticles();
+    try {
+      await axios.patch(`/articles/approve/${id}`);
+      getArticles();
+    } catch (err) {
+      console.log('[ApproveArticles, approveArticle]', err);
+    }
   };
 
   const disApproveArticle = async (id) => {
-    await axios.delete(`/articles/disapprove/${id}?auth=${token}`);
-    getArticles();
+    try {
+      await axios.delete(`/articles/disapprove/${id}`);
+      getArticles();
+    } catch (err) {
+      console.log('[ApproveArticles, approveArticle]', err);
+    }
   };
 
   const updateArticle = (id) => {

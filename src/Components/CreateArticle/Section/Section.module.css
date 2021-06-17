@@ -1,0 +1,16 @@
+.Section {
+  position: relative;
+}
+
+.Cross {
+  color: var(--error-1);
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  transform: translateY(100%);
+  cursor: pointer;
+}
+
+.ImageAdd {
+  position: relative;
+}

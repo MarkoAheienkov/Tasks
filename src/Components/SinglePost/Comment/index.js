@@ -7,7 +7,7 @@ import Form from "../../Shared/Form";
 import Comments from "../Comments";
 import { useParams } from "react-router";
 
-const Comment = ({text, id}) => {
+const Comment = ({text, id, comment_id}) => {
   const [isShowReplies, setIsShowreplies] = useState(false);
   const [isRepliesLoading, setIsRepliesLoading] = useState(false);
   const [replies, setReplies] = useState(null);
@@ -25,15 +25,19 @@ const Comment = ({text, id}) => {
     }
   });
 
-  const token = useSelector((state) => state.token);
   const isAuth = useSelector((state) => state.isAuth);
 
   const getReplies = async () => {
-    setIsRepliesLoading(true);
-    const res = await axios.get(`/comments/replies/${id}`);
-    const replies = res.data.replies;
-    setReplies(replies);
-    setIsRepliesLoading(false);
+    try {
+      setIsRepliesLoading(true);
+
+      const res = await axios.get(`/comments/replies/${id || comment_id}`);
+      const replies = res.data.replies;
+      setReplies(replies);
+      setIsRepliesLoading(false);
+    } catch (err) {
+      console.log('[Comment, getReplies]', err);
+    }
   };
 
   const toggleReplies = () => {
@@ -48,10 +52,27 @@ const Comment = ({text, id}) => {
   };
 
   const submit = async () => {
-    await axios.post(`/comments/replies/${id}?auth=${token}`, {
-      text: addReplyForm.reply.value,
-      postId,
-    });
+    try {
+      const res = await axios.post(`/comments/replies/${id || comment_id}`, {
+        text: addReplyForm.reply.value,
+        postId,
+      });
+      const { reply } = res.data;
+      const replyy = {
+        text: reply.reply_id.text,
+        id: reply.reply_id.comment_id,
+        comment_id: reply.reply_id.comment_id,
+      }
+      const newReplies = [...replies];
+      newReplies.push(replyy);
+      setReplies(newReplies);
+      const newAddReplyForm = {...addReplyForm};
+      newAddReplyForm.reply={...newAddReplyForm.reply};
+      newAddReplyForm.reply.value = '';
+      setAddReplyForm(newAddReplyForm);
+    } catch (err) {
+      console.log('[Comment, getReplies]', err);
+    }
   };
   
   return <section className={classes.Comment}>

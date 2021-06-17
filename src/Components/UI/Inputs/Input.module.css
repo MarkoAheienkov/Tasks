@@ -1,6 +1,7 @@
 .FormControl {
-  padding: 10px 0;
   width: 100%;
+  padding-bottom: 0px;
+  margin-bottom: 10px;
 }
 
 .Label {
@@ -33,5 +34,21 @@
 
 .Input:focus,
 .Textarea:focus {
-  box-shadow: 0px 0px 1px 1px #610ec7b0;
+  box-shadow: 0px 0px 1px 1px #37e2e2b0;
+}
+
+.FormControl.Error .Input {
+  box-shadow: 0px 0px 1px 1px var(--error-1);
+}
+
+.Text {
+  color: transparent;
+  display: block;
+  padding: 2px 0;
+}
+
+.ErrorText {
+  color: var(--error-1);
+  display: block;
+  padding: 2px 0;
 }

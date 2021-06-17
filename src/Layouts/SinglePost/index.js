@@ -18,7 +18,6 @@ const SinglePost = () => {
   const [isCommentsLoading, setIsCommentsLoading] = useState(true);
 
   const isAuth = useSelector((state) => state.isAuth);
-  const token = useSelector((state) => state.token);
 
   const [addCommentForm, setAddCommentForm] = useState({
     comment: {
@@ -33,26 +32,45 @@ const SinglePost = () => {
   });
 
   const submit = async () => {
-    await axios.post(`/comments/${id}?auth=${token}`, {
-      text: addCommentForm.comment.value,
-    });
+    try {
+      const res = await axios.post(`/comments/${id}`, {
+        text: addCommentForm.comment.value,
+      });
+      const { comment } = res.data;
+      const newComments = [...comments];
+      newComments.push(comment);
+      setComments(newComments);
+      const newAddCommentForm = {...addCommentForm};
+      newAddCommentForm.comment={...newAddCommentForm.comment};
+      newAddCommentForm.comment.value = '';
+      setAddCommentForm(newAddCommentForm);
+    } catch (err) {
+      console.log('[SinglePost, submit]', err);
+    }
   };
 
   const getPost = async (id) => {
-    setIsPostsLoading(true);
-    const res = await axios.get(`/posts/${id}`);
-    const post = res.data;
-    setPost(post);
-    setIsPostsLoading(false);
+    try {
+      setIsPostsLoading(true);
+      const res = await axios.get(`/posts/${id}`);
+      const post = res.data;
+      setPost(post);
+      setIsPostsLoading(false);
+    } catch (err) {
+      console.log('[SinglePost, getPost]', err);
+    }
   };
 
   const getComments = async (id) => {
-    setIsCommentsLoading(true);
-    const res = await axios.get(`/comments/${id}`);
-    const {comments} = res.data;
-    setComments(comments);
-    console.log(comments);
-    setIsCommentsLoading(false);
+    try {
+      setIsCommentsLoading(true);
+      const res = await axios.get(`/comments/${id}`);
+      const {comments} = res.data;
+      setComments(comments);
+      setIsCommentsLoading(false);
+    } catch (err) {
+      console.log('[SinglePost, getComments]', err);
+    }
   }
 
   useEffect(() => {

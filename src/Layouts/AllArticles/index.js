@@ -1,7 +1,6 @@
 import axios from "../../Axios";
 import { useEffect, useState } from "react";
 import Articles from "../../Components/AllArticles/Articles";
-import { useSelector } from "react-redux";
 import classes from "./AllArticles.module.css";
 import { useHistory } from "react-router";
 
@@ -11,15 +10,17 @@ const AllArticles = () => {
 
   const history = useHistory();
 
-  const token = useSelector((state) => state.token);
-
   const getArticles = async () => {
-    setIsLoading(true);
-    const res = await axios.get(`/articles`);
-    const articles = res.data.articles;
-    console.log(articles);
-    setArticles(articles);
-    setIsLoading(false);
+    try {
+      setIsLoading(true);
+      const res = await axios.get(`/articles`);
+      const articles = res.data.articles;
+      console.log(articles);
+      setArticles(articles);
+      setIsLoading(false);
+    } catch (err) {
+      console.log('[AllArticles, getArticles]', err);
+    }
   };
 
   useEffect(() => {
@@ -27,8 +28,12 @@ const AllArticles = () => {
   }, []);
 
   const removeArticle = async (id) => {
-    await axios.delete(`/articles/${id}?auth=${token}`);
-    getArticles();
+    try {
+      await axios.delete(`/articles/${id}`);
+      getArticles();
+    } catch (err) {
+      console.log('[AllArticles, removeArticle]', err);
+    }
   };
 
   const updateArticle = (id) => {

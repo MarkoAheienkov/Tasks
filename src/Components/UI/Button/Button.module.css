@@ -57,8 +57,33 @@
   color: var(--basic-color-1);
   text-align: left;
   padding: 0;
+  max-width: 100px;
+}
+
+.Button.InlinePrimary.White {
+  display: inline-block;
+  font-size: 24px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.Button.InlinePrimary.White:hover {
+  color: white;
 }
 
 .Button.InlinePrimary:hover {
   color: black;
+}
+
+.Button:disabled {
+  background: transparent;
+  color: rgb(167, 166, 166);
+  cursor: not-allowed;
+  border: 2px solid rgb(167, 166, 166);
+}
+
+.Button:disabled:hover {
+  background: transparent;
+  color: rgb(167, 166, 166);
+  cursor: not-allowed;
+  border: 2px solid rgb(167, 166, 166);
 }

@@ -1,10 +1,10 @@
 import Article from "../Article";
 
 const Articles = ({articles, remove, approve, disapprove, update}) => {
-  return articles.map(({id, title}) => {
+  return articles.map(({id, article_id,  title}) => {
     return <Article 
               key={id}
-              id={id}
+              id={id || article_id}
               title={title}
               remove={remove}
               approve={approve}

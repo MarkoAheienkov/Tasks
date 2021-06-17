@@ -1,8 +1,9 @@
 import Comment from "../Comment";
 
 const Comments = ({comments}) => {
-  return comments.map(({text, id}) => {
-    return <Comment key={id} id={id} text={text}/>
+  return comments.map((comment) => {
+    const {text, id, comment_id} = comment;
+    return <Comment key={id || comment_id} id={id || comment_id} comment_id={comment_id} text={text}/>
   });
 };
 

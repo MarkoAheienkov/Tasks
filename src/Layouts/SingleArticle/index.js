@@ -10,15 +10,18 @@ const SingleArticle = () => {
 
   const [article, setArticle] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-
   
   const getArticle = async (id) => {
-    setIsLoading(true);
-    const res = await axios.get(`/articles/${id}`);
-    const post = res.data;
-    console.log(post);
-    setArticle(post);
-    setIsLoading(false);
+    try {
+      setIsLoading(true);
+      const res = await axios.get(`/articles/${id}`);
+      const post = res.data;
+      console.log(post);
+      setArticle(post);
+      setIsLoading(false);
+    } catch (err) {
+      console.log('[SingleArticle, getArticle]', err);
+    }
   };
 
   useEffect(() => {
@@ -28,7 +31,6 @@ const SingleArticle = () => {
 
 
   return <section className='container'>
-    
     {
       isLoading?
       null:

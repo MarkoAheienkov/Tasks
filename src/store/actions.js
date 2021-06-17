@@ -1,27 +1,29 @@
-export const changeUser = (state, action) => {
-  const {pivot} = action;
+export const setAuthTrue = (state, action) => {
   const newState = {...state};
-  switch(pivot) {
-    case('guest'):
-      newState.isAuth = false;
-      newState.token = null;
-      break;
-    case('admin'):
-      newState.isAuth = true;
-      newState.token = 'admin';
-      break;
-    case('user'):
-      newState.isAuth = true;
-      newState.token = 'user';
-      break;
-    case('moderator'):
-      newState.isAuth = true;
-      newState.token = 'moderator';
-      break;
-    default:
-      newState.isAuth = false;
-      newState.token = null;
-      break;
-  }
+  newState.isAuth = true;
+  return newState;
+};
+
+export const setAuthFalse = (state, action) => {
+  const newState = {...state};
+  newState.isAuth = false;
+  return newState;
+};
+
+export const setUser = (state, action) => {
+  const newState = {...state};
+  const { pivot } = action;
+  const { username, email, isAdmin } = pivot;
+  newState.username = username;
+  newState.email = email;
+  newState.isAdmin = isAdmin;
+  return newState;
+};
+
+export const clearUser = (state, action) => {
+  const newState = {...state};
+  newState.username = 'Guest';
+  newState.email = '';
+  newState.isAdmin = false;
   return newState;
 };

@@ -9,11 +9,15 @@ const ArticlesLayout = () => {
   const [articles, setArticles] = useState([]);
 
   const getData = async () => {
-    setIsLoading(true);
-    const res = await axios.get('/articles');
-    const {articles} = res.data;
-    setArticles(articles);
-    setIsLoading(false);
+    try {
+      setIsLoading(true);
+      const res = await axios.get('/articles');
+      const {articles} = res.data;
+      setArticles(articles);
+      setIsLoading(false);
+    } catch (err) {
+      console.log('[ArticlesLayout, getData]', err);
+    }
   };
 
   useEffect(() => {
@@ -24,7 +28,11 @@ const ArticlesLayout = () => {
 
     <section className='container'>
       <div className={classes.Grid}>
-        <Articles articles={articles}/>
+        {
+          isLoading?
+          null:
+          <Articles articles={articles}/>
+        }
       </div>
     </section>
   </>;

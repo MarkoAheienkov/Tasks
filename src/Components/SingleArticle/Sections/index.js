@@ -1,8 +1,8 @@
 import Section from "../Section";
 
-const Sections = ({sections}) => {
-  return sections.map(({title, text, images, id}) => {
-    return <Section key={id} title={title} text={text} images={images}/>;
+const Sections = ({sections = []}) => {
+  return sections.map(({title, text, images, id, section_id}) => {
+    return <Section key={id | section_id} title={title} text={text} images={images}/>;
   });
 };
 

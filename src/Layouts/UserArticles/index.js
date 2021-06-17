@@ -11,15 +11,17 @@ const UserArticles = () => {
 
   const history = useHistory();
 
-  const token = useSelector((state) => state.token);
-
   const getArticles = async () => {
-    setIsLoading(true);
-    const res = await axios.get(`/articles/user?auth=${token}`);
-    const articles = res.data.articles;
-    console.log(articles);
-    setArticles(articles);
-    setIsLoading(false);
+    try {
+      setIsLoading(true);
+      const res = await axios.get(`/articles/user`);
+      const articles = res.data.articles;
+      console.log(articles);
+      setArticles(articles);
+      setIsLoading(false);
+    } catch (err) {
+      console.log('[UserArticles, getArticles]', err);
+    }
   };
 
   useEffect(() => {
@@ -27,8 +29,12 @@ const UserArticles = () => {
   }, []);
 
   const removeArticle = async (id) => {
-    await axios.delete(`/articles/${id}?auth=${token}`);
-    getArticles();
+    try {
+      await axios.delete(`/articles/${id}`);
+      getArticles();
+    } catch (err) {
+      console.log('[UserArticles, removeArticle]', err);
+    }
   };
 
   const updateArticle = (id) => {

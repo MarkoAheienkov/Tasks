@@ -33,44 +33,62 @@ const PostsLayout = () => {
 
   const [isLoading, setIsLoading] = useState(true);
 
-  const token = useSelector((state) => {
-    return state.token;
-  });
-
   const [posts, setPosts] = useState([]);
 
   const getPosts = async () => {
-    setIsLoading(true);
-    const res = await axios.get('/posts');
-    const data = res.data;
-    setPosts(data.posts);
-    setIsLoading(false);
+    try {
+      setIsLoading(true);
+      const res = await axios.get('/posts');
+      const data = res.data;
+      setPosts(data.posts);
+      setIsLoading(false);
+    } catch (err) {
+      console.log('[PostsLayout, getPosts]', err);
+    }
   };
 
   const getPostsBySearch = async (searchValue) => {
-    setIsLoading(true);
-    const res = await axios.get(`/posts?search=${searchValue}`);
-    const data = res.data;
-    setPosts(data.posts);
-    setIsLoading(false);
+    try {
+      setIsLoading(true);
+      const res = await axios.get(`/posts?search=${searchValue}`);
+      const data = res.data;
+      setPosts(data.posts);
+      setIsLoading(false);
+    } catch (err) {
+      console.log('[PostsLayout, getPostsBySearch]', err);
+    }
   };
 
   useEffect(() => {
     getPosts();
   }, []);
 
-  const onSubmit = async () => {
-    const body = {
-      title: addPostConfigForm.title.value,
-      body: addPostConfigForm.body.value,
-    }
-    const res = await axios.post(`/posts?auth=${token}`, body);
-    const data = res.data;
-    const post = data.post;
+  const clearValue = (field) => {   
+    setAddPostConfigForm((addPostConfigForm) => {
+      const newAddPostConfigForm = {...addPostConfigForm};
+      newAddPostConfigForm[field] = {...newAddPostConfigForm[field]};
+      newAddPostConfigForm[field].value = '';
+      return newAddPostConfigForm;
+    });
+  };
 
-    const newPosts = [...posts];
-    newPosts.push(post);
-    setPosts(newPosts);
+  const onSubmit = async () => {
+    try {
+      const body = {
+        title: addPostConfigForm.title.value,
+        body: addPostConfigForm.body.value,
+      }
+      const res = await axios.post(`/posts`, body);
+      const data = res.data;
+      const post = data.post;
+      clearValue('title');
+      clearValue('body');
+      const newPosts = [...posts];
+      newPosts.push(post);
+      setPosts(newPosts);
+    } catch (err) {
+      console.log('[PostsLayout, onSubmit]', err);
+    }
   };
 
   const search = (value) => {

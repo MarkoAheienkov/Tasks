@@ -14,7 +14,8 @@ const Sidebar = ({isShow, hideSideBar}) => {
     },
   ];
   const isAuth = useSelector((state) => state.isAuth);
-  const token = useSelector((state) => state.token);
+  const isAdmin = useSelector((state) => state.isAdmin);
+  const username = useSelector((state) => state.username);
   if (isAuth) {
     links.push(
       {
@@ -26,8 +27,19 @@ const Sidebar = ({isShow, hideSideBar}) => {
         content: 'Your Articles',
       },
     );
+  } else {
+    links.push(
+      {
+        path: '/auth/sign-up',
+        content: 'Sign Up',
+      },
+      {
+        path: '/auth/sign-in',
+        content: 'Login',
+      },
+    );
   }
-  if (token === 'admin') {
+  if (isAdmin) {
     links.push(
       {
         path: '/articles/approve',
@@ -45,7 +57,7 @@ const Sidebar = ({isShow, hideSideBar}) => {
   }
   return <div className={sideBarClasses.join(' ')}>
     <div className={classes.Greetings}>
-      <h2>Hi, guest!</h2>
+      <h2>Hi, {username}!</h2>
     </div>
     <ul className={classes.Links}>
       <Links links={links} click={hideSideBar}></Links>

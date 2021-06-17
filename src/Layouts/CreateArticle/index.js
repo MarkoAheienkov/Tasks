@@ -4,29 +4,31 @@ import Sections from "../../Components/CreateArticle/Sections";
 import Button from "../../Components/UI/Button"
 import Input from "../../Components/UI/Inputs";
 import { useHistory } from "react-router";
-import { useSelector } from "react-redux";
 
 const CreateArticle = () => {
   const [title, setTitle] = useState('');
   const [cover, setCover] = useState('');
   const [sections, setSections] = useState([]);
-  const token = useSelector((state) => state.token);
   const history = useHistory();
 
   const onSubmit = async (event) => {
-    event.preventDefault();
-    const data = {
-      title,
-      cover,
-      sections,
+    try {
+      event.preventDefault();
+      const data = {
+        title,
+        cover,
+        sections,
+      }
+      const body = {
+        title: data.title,
+        cover: data.cover,
+        sections: data.sections,
+      };
+      await axios.post(`/articles`, body);
+      history.push('/articles');
+    } catch (err) {
+      console.log('[CreateArticle, onSubmit]', err);
     }
-    const body = {
-      title: data.title,
-      cover: data.cover,
-      sections: data.sections,
-    };
-    await axios.post(`/articles?auth=${token}`, body);
-    history.push('/articles');
   };
 
   const onAddSection = () => {
@@ -73,6 +75,19 @@ const CreateArticle = () => {
     setSections(newSections);
   }
 
+  const onRemoveSection = (id) => {
+    const newSections = sections.filter((section) => section.id !== id);
+    setSections(newSections);
+  };
+
+  const onRemoveImage = (sectionId, imageId) => {
+    const newSections = [...sections];
+    const idx = newSections.findIndex((section) => section.id === sectionId);
+    newSections[idx] = {...newSections[idx]};
+    newSections[idx].images = newSections[idx].images.filter((image) => image.id !== imageId);
+    setSections(newSections);
+  }; 
+
   return <section className='container'>
     <form onSubmit={onSubmit}>
       <Input 
@@ -96,7 +111,13 @@ const CreateArticle = () => {
           value={cover}
       />
 
-      <Sections addImage={addImage} onChange={onChangeSection} onChangeImage={onChangeImage} sections={sections}/>
+      <Sections
+      addImage={addImage}
+      onChange={onChangeSection}
+      onChangeImage={onChangeImage}
+      onRemoveImage={onRemoveImage}
+      onRemoveSection={onRemoveSection}
+      sections={sections}/>
 
       <Button btnType={'primary'} type="button" click={onAddSection}>Add Section</Button>
       <br/>

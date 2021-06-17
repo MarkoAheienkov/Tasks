@@ -11,7 +11,7 @@ const Post  = ({title, body, id, likes = 0}) => {
   };
   let transformBody = body;
   if (transformBody.length > 100) {
-    transformBody = addDots(shortText(body, 1000), 3);
+    transformBody = addDots(shortText(body, 300), 3);
   }
   return <article onClick={postClick} className={classes.Post}>
     <div className={classes.Actions}>

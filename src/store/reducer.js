@@ -1,16 +1,23 @@
-import { changeUser } from './actions';
+import { clearUser, setAuthFalse, setAuthTrue, setUser } from './actions';
 import actionTypes from './actionTypes';
 
 const initState = {
   isAuth: false,
-  token: null,
+  username: 'Guest',
+  email: '',
+  isAdmin: false,
 };
 
 const reducer = (state = initState, action) => {
-  console.log(action);
   switch(action.type) {
-    case(actionTypes.CHANGE_USER):
-      return changeUser(state, action);
+    case(actionTypes.SET_AUTH_TRUE):
+      return setAuthTrue(state, action);
+    case(actionTypes.SET_AUTH_FALSE):
+      return setAuthFalse(state, action);
+    case(actionTypes.SET_USER):
+      return setUser(state, action);
+    case(actionTypes.CLEAR_USER):
+      return clearUser(state, action);
     default:
       return state;
   }
